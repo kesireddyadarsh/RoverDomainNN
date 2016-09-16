@@ -23,7 +23,6 @@ struct connect{
 static double random_global(double a) { return a* (rand() / double(RAND_MAX)); }
 
 // This is for each Neuron
-
 class Neuron;
 typedef vector<Neuron> Layer;
 
@@ -41,7 +40,6 @@ public:
 };
 
 //This creates connection with neurons.
-
 Neuron::Neuron(unsigned numOutputs, unsigned myIndex){
     for (unsigned c = 0; c < numOutputs; ++c) {
         z_outputWeights.push_back(connect());
@@ -50,11 +48,9 @@ Neuron::Neuron(unsigned numOutputs, unsigned myIndex){
     z_myIndex = myIndex;
 }
 
-
 double Neuron::transferFunction(double x){
     return tanh(x);
 }
-
 
 void Neuron::feedForward(const Layer prevLayer){
     double sum = 0.0;
@@ -73,7 +69,6 @@ void Neuron::feedForward(const Layer prevLayer){
 }
 
 //This is single neural network
-
 class Net{
 public:
     Net(vector<unsigned> topology);
@@ -252,7 +247,6 @@ Population::Population(int numNN,vector<unsigned> topology){
 }
 
 //Return index of higher
-
 int Population::returnIndex(int numNN){
     int temp = numNN;
     int number_1 = (rand() % temp);
@@ -270,7 +264,6 @@ int Population::returnIndex(int numNN){
     }
 }
 
-
 void Population::repop(int numNN){
     for (int temp =0 ; temp<numNN/2; temp++) {
         int R = rand()% popVector.size();
@@ -279,12 +272,10 @@ void Population::repop(int numNN){
     }
 }
 
-
 void Population::runNetwork(vector<double> inputVals){
         popVector[0].feedForward(inputVals);
         popVector[0].backProp();
 }
-
 
 class Rover{
 public:
@@ -347,15 +338,12 @@ public:
     vector<Rover> individualRover;
 };
 
-
 class Environment{
 public:
     vector<POI> individualPOI;
 };
 
-
 //This is main function
-
 int main(int argc, const char * argv[]) {
     // insert code here...
     srand(time(NULL));
