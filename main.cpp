@@ -358,7 +358,6 @@ public:
 
 int main(int argc, const char * argv[]) {
     // insert code here...
-    //cout << "Hello, World!\n";
     srand(time(NULL));
     
     //Create numNN of neural network
