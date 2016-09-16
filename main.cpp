@@ -291,34 +291,44 @@ public:
     double x_position,y_position,x_initial,y_initial;
     vector<double> sensors;
     vector<Net> singleneuralNetwork;
-    void sense_poi(double x_position_poi,double y_position_poi);
-    void sense_rover();
-    void initial_sense_poi(double x_position_poi,double y_position_poi);
-    void initial_sense_rover();
+    double sense_poi(double x_position_poi,double y_position_poi);
+    double sense_rover(double x_position_otherrover, double y_position_otherrover);
+    double initial_sense_poi(double x_position_poi,double y_position_poi);
+    double initial_sense_rover(double x_position_otherrover, double y_position_otherrover);
     vector<double> controls;
     double delta_x,delta_y;
 };
 
-void Rover::initial_sense_poi(double x_position_poi,double y_position_poi){
+double Rover::initial_sense_poi(double x_position_poi,double y_position_poi){
     double delta=0;
     double distance = sqrt(pow(x_initial-x_position_poi, 2)+pow(y_initial-y_position_poi, 2));
     double minimum_observation_distance =0.0;
     delta=(distance>minimum_observation_distance)?distance:minimum_observation_distance ;
+    return delta;
 }
 
-void Rover::initial_sense_rover(){
-    
+double Rover::initial_sense_rover(double x_position_otherrover, double y_position_otherrover){
+    double delta_sense_rover=0.0;
+    double distance = sqrt(pow(x_initial-x_position_otherrover, 2)+pow(y_initial-y_position_otherrover, 2));
+    delta_sense_rover=(1/distance);
+    return delta_sense_rover;
 }
 
-void Rover::sense_poi(double x_position_poi,double y_position_poi ){
-    double delta=0;
+//Function returns: sum of values of POIs divided by their distance
+double Rover::sense_poi(double x_position_poi,double y_position_poi ){
+    double delta_sense_poi=0;
     double distance = sqrt(pow(x_position-x_position_poi, 2)+pow(y_position-y_position_poi, 2));
     double minimum_observation_distance =0.0;
-    delta=(distance>minimum_observation_distance)?distance:minimum_observation_distance ;
+    delta_sense_poi=(distance>minimum_observation_distance)?distance:minimum_observation_distance ;
+    return delta_sense_poi;
 }
 
-void Rover::sense_rover(){
-    
+//Function returns: sum of sqaure distance from a rover to all the other rovers in the quadrant
+double Rover::sense_rover(double x_position_otherrover, double y_position_otherrover){
+    double delta_sense_rover=0.0;
+    double distance = sqrt(pow(x_position-x_position_otherrover, 2)+pow(y_position-y_position_otherrover, 2));
+    delta_sense_rover=(1/distance);
+    return delta_sense_rover;
 }
 
 class POI{
