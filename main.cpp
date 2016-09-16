@@ -296,6 +296,7 @@ public:
     double initial_sense_poi(double x_position_poi,double y_position_poi);
     double initial_sense_rover(double x_position_otherrover, double y_position_otherrover);
     vector<double> controls;
+    void get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
     double delta_x,delta_y;
 };
 
@@ -331,6 +332,15 @@ double Rover::sense_rover(double x_position_otherrover, double y_position_otherr
     return delta_sense_rover;
 }
 
+void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover){
+    for (int i=0; i<4; i++) {
+        sensors.push_back(sense_poi(x_position_poi, y_position_poi));
+    }
+    for (int i=0; i<4; i++) {
+        sensors.push_back(sense_poi(x_position_otherrover,y_position_otherrover));
+    }
+}
+
 class POI{
 public:
     double x_position_poi,y_position_poi,value_poi;
@@ -362,8 +372,6 @@ int main(int argc, const char * argv[]) {
     Population mypop(numNN,topology);
     
     //Create values for Rover;
-    
-    
     
     
     return 0;
