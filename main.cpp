@@ -74,6 +74,7 @@ public:
     Net(vector<unsigned> topology);
     void feedForward(vector<double> inputVals);
     vector<Layer> z_layer;
+    vector<double> outputvaluesNN;
     double backProp();
     double z_error;
     double z_error_temp;
@@ -174,6 +175,7 @@ void Net::feedForward(vector<double> inputVals){
         //double delta = temp_targets[n] - outputLayer[n].getOutputVal();
         //cout<<"This is delta value::"<<delta;
         //z_error_temp += delta * delta;
+        outputvaluesNN.push_back(outputLayer[n].getOutputVal());
     }
     
 }
@@ -335,7 +337,7 @@ void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,dou
 class POI{
 public:
     double x_position_poi,y_position_poi,value_poi;
-    vector<Rover> individualRover;
+    //vector<Rover> individualRover;
 };
 
 class Environment{
@@ -358,7 +360,42 @@ int main(int argc, const char * argv[]) {
     topology.push_back(2);
     Population mypop(numNN,topology);
     
+    
     //Create values for Rover;
+    
+    int x_position_otherRover=0;
+    int y_position_otherRover=0;
+    
+    Environment world;
+    //Set values of poi's
+    POI individualPOI;
+    individualPOI.x_position_poi=30;
+    individualPOI.y_position_poi=50;
+    individualPOI.value_poi=100;
+    
+    //vectors of rovers
+    vector<Rover> teamRovers;
+    
+    // create a rover
+    Rover individualRover;
+    
+    //import wt's into rover
+    
+    //run the rover sensors all 8
+    individualRover.get_all_sensorvalues(individualPOI.x_position_poi, individualPOI.y_position_poi, x_position_otherRover, y_position_otherRover);
+    //run the nn
+    mypop.runNetwork(individualRover.sensors);
+    //dx and dy
+    individualRover.delta_x = mypop.popVector.at(0).outputvaluesNN.at(0);
+    individualRover.delta_y = mypop.popVector.at(0).outputvaluesNN.at(1);
+    //move rover
+    //evaluate to POI
+    //loop to run rover sensors all 8
+    //loop to import wt's
+    
+    //sort and evolution
+    
+    //repeat above all time some number of times
     
     
     return 0;
