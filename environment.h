@@ -8,7 +8,6 @@
 
 #ifndef environment_h
 #define environment_h
-
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -22,7 +21,9 @@
 #include "rover.h"
 #include "neuralNetwork.h"
 
+
 using namespace std;
+
 
 
 class Environment{

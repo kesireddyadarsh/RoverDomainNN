@@ -8,7 +8,6 @@
 
 #ifndef rover_h
 #define rover_h
-
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -22,7 +21,9 @@
 #include "rover.h"
 #include "neuralNetwork.h"
 
+
 using namespace std;
+
 
 class Rover{
 public:
