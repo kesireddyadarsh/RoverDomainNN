@@ -275,13 +275,14 @@ void Population::repop(int numNN){
 }
 
 void Population::runNetwork(vector<double> inputVals){
-        popVector[0].feedForward(inputVals);
-        popVector[0].backProp();
+        popVector.at(0).feedForward(inputVals);
+        popVector.at(0).backProp();
 }
 
 class Rover{
 public:
     double x_position,y_position,x_initial,y_initial;
+   // double x_position,y_position;
     vector<double> sensors;
     vector<Net> singleneuralNetwork;
     double sense_poi(double x_position_poi,double y_position_poi);
@@ -290,7 +291,9 @@ public:
     double initial_sense_rover(double x_position_otherrover, double y_position_otherrover);
     vector<double> controls;
     void get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
+    void get_all_sensorvalues_initial(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
     double delta_x,delta_y;
+    void teta();
 };
 
 double Rover::initial_sense_poi(double x_position_poi,double y_position_poi){
@@ -334,6 +337,19 @@ void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,dou
     }
 }
 
+void Rover::get_all_sensorvalues_initial(double x_position_poi, double y_position_poi, double x_position_otherrover, double y_position_otherrover){
+    for (int i=0; i<4; i++) {
+        sensors.push_back(initial_sense_poi(x_position_poi, y_position_poi));
+    }
+    for (int i=0; i<4; i++) {
+        sensors.push_back(initial_sense_poi(x_position_otherrover,y_position_otherrover));
+    }
+}
+
+void Rover::teta(){
+    
+}
+
 class POI{
 public:
     double x_position_poi,y_position_poi,value_poi;
@@ -348,10 +364,11 @@ public:
 //This is main function
 int main(int argc, const char * argv[]) {
     // insert code here...
+    //Try to move Neural network in to header
     srand(time(NULL));
     
     //Create numNN of neural network
-    int numNN=10;
+    int numNN=100;
     //int numCases = 4;
     vector<unsigned> topology;
     topology.clear();
@@ -359,10 +376,14 @@ int main(int argc, const char * argv[]) {
     topology.push_back(10);
     topology.push_back(2);
     Population mypop(numNN,topology);
-    
+    //cout<<"This is size of neural networks::"<<mypop.popVector.size()<<endl;
+    //cout<<"This is size of layer ::"<<mypop.popVector.at(10).z_layer.at(0).size()<<endl;
+    //for (int i=0; i<mypop.popVector.size(); i++) {
+        //cout<<"This is weight"<<mypop.popVector.at(10).z_layer.at(0)<<endl;
+    //}
+    //cout<<"This is weight of connection:::"<<mypop.popVector.at(10).z_layer.at(0).size()<<endl;
     
     //Create values for Rover;
-    
     int x_position_otherRover=0;
     int y_position_otherRover=0;
     
@@ -373,21 +394,45 @@ int main(int argc, const char * argv[]) {
     individualPOI.y_position_poi=50;
     individualPOI.value_poi=100;
     
+    
     //vectors of rovers
-    vector<Rover> teamRovers;
+    vector<Rover> teamRover;
     
-    // create a rover
+    //import weight into rovers
     Rover individualRover;
-    
-    //import wt's into rover
-    
     //run the rover sensors all 8
-    individualRover.get_all_sensorvalues(individualPOI.x_position_poi, individualPOI.y_position_poi, x_position_otherRover, y_position_otherRover);
-    //run the nn
-    mypop.runNetwork(individualRover.sensors);
-    //dx and dy
-    individualRover.delta_x = mypop.popVector.at(0).outputvaluesNN.at(0);
-    individualRover.delta_y = mypop.popVector.at(0).outputvaluesNN.at(1);
+    individualRover.x_position=1;
+    individualRover.y_position=1;
+    //choose your teta
+    int first_net =0;
+    for (int total_loop =0; total_loop<numNN; total_loop++) {
+    for (int single_net=0; single_net<100; single_net++) {
+        
+        individualRover.get_all_sensorvalues(individualPOI.x_position_poi, individualPOI.y_position_poi, x_position_otherRover, y_position_otherRover);
+        for (int i=0; i<individualRover.sensors.size(); i++) {
+            cout<<"This is sensor value:::"<<individualRover.sensors.at(i)<<endl;
+        }
+        //run the nn
+        mypop.runNetwork(individualRover.sensors);
+        //dx and dy
+        //Change the dx and dy
+        individualRover.delta_x = mypop.popVector.at(first_net).outputvaluesNN.at(0);
+        individualRover.delta_y = mypop.popVector.at(first_net).outputvaluesNN.at(1);
+        //move rover
+        individualRover.x_position=individualRover.x_position+individualRover.delta_x;
+        individualRover.y_position=individualRover.y_position+individualRover.delta_y;
+        //Create teta and keep chaning
+        cout<<"This is x position::"<<individualRover.x_position<<endl;
+        cout<<"This is y position::"<<individualRover.y_position<<endl;
+        individualRover.sensors.clear();
+        
+    }
+    first_net++;
+    }
+    
+    //find teta value
+    
+        //cout<<"This is delta_y"<<individualRover.delta_y<<endl;
     //move rover
     //evaluate to POI
     //loop to run rover sensors all 8
@@ -396,7 +441,6 @@ int main(int argc, const char * argv[]) {
     //sort and evolution
     
     //repeat above all time some number of times
-    
     
     return 0;
 }
