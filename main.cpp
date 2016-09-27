@@ -183,16 +183,66 @@ bool POI_sensor_test(){
 bool rover_sensor_test(){
     bool passfail = false;
     
-    bool pass1 = false;
-    bool pass2 = false;
-    bool pass3 = false;
-    bool pass4 = false;
-
+    bool pass5 = false;
+    bool pass6 = false;
+    bool pass7 = false;
+    bool pass8 = false;
     
+    Rover R1;
+    Rover R2;
+    R1.x_position = 0;
+    R1.y_position = 0;
+    R1.theta = 0; // north
+    R2.theta = 0;
     
-    if(pass1 && pass2 && pass3 && pass4){
+    // case 1, Rover 2 to the north
+    R2.x_position = 0;
+    R2.y_position = 1;
+    R1.reset_sensors();
+    R1.sense_rover(R2.x_position,R2.y_position);
+    /// sensor 4 should fire, none other.
+    if(R1.sensors.at(4) != 0 && R1.sensors.at(5) == 0 && R1.sensors.at(6) == 0 && R1.sensors.at(7) == 0){
+        pass5 = true;
+    }
+    assert(pass5 == true);
+    
+    // case 2, Rover 2 to the east
+    R2.x_position = 1;
+    R2.y_position = 0;
+    R1.reset_sensors();
+    R1.sense_rover(R2.x_position,R2.y_position);
+    /// sensor 5 should fire, none other.
+    if(R1.sensors.at(4) == 0 && R1.sensors.at(5) != 0 && R1.sensors.at(6) == 0 && R1.sensors.at(7) == 0){
+        pass6 = true;
+    }
+    assert(pass6 == true);
+    
+    // case 3, Rover 2 to the south
+    R2.x_position = 0;
+    R2.y_position = -1;
+    R1.reset_sensors();
+    R1.sense_rover(R2.x_position,R2.y_position);
+    /// sensor 6 should fire, none other.
+    if(R1.sensors.at(4) == 0 && R1.sensors.at(5) == 0 && R1.sensors.at(6) != 0 && R1.sensors.at(7) == 0){
+        pass7 = true;
+    }
+    assert(pass7 == true);
+    
+    // case 4, Rover 2 to the west
+    R2.x_position = -1;
+    R2.y_position = 0;
+    R1.reset_sensors();
+    R1.sense_rover(R2.x_position,R2.y_position);
+    /// sensor 7 should fire, none other.
+    if(R1.sensors.at(4) == 0 && R1.sensors.at(5) == 0 && R1.sensors.at(6) == 0 && R1.sensors.at(7) != 0){
+        pass8 = true;
+    }
+    assert(pass8 == true);
+    
+    if(pass5 && pass6 && pass7 && pass8){
         passfail = true;
     }
+    assert(passfail == true);
     return passfail;
 }
 
@@ -204,6 +254,7 @@ int main(int argc, const char * argv[]) {
     srand((unsigned)time(NULL));
     
     POI_sensor_test();
+    rover_sensor_test();
     
     //Create numNN of neural network
     int numNN=100;
