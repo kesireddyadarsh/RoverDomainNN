@@ -125,7 +125,6 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     
     phi = resolve(phi);
     
-    
     cout << "IN QUAD: FIND PHI2: " << phi << endl;
     
     int case_number;

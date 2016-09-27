@@ -246,6 +246,23 @@ bool rover_sensor_test(){
     return passfail;
 }
 
+void custom_test(){
+    Rover R;
+    POI P;
+    R.x_position = 0;
+    R.y_position = 0;
+    R.theta = 90;
+    
+    P.x_position_poi = 0.56;
+    P.y_position_poi = -1.91;
+    P.value_poi = 100;
+    
+    R.reset_sensors();
+    R.sense_poi(P.x_position_poi,P.y_position_poi,P.value_poi);
+    
+    
+}
+
 
 //This is main function
 int main(int argc, const char * argv[]) {
@@ -253,8 +270,9 @@ int main(int argc, const char * argv[]) {
     //Try to move Neural network in to header
     srand((unsigned)time(NULL));
     
-    POI_sensor_test();
-    rover_sensor_test();
+    //POI_sensor_test();
+    //rover_sensor_test();
+    custom_test();
     
     //Create numNN of neural network
     int numNN=100;
