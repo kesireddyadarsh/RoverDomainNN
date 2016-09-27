@@ -24,14 +24,24 @@
 
 using namespace std;
 
+double resolve(double angle){
+    while(angle > 360){
+        angle -=360;
+    }
+    while(angle < 0){
+        angle += 360;
+    }
+    return angle;
+}
+
 double determineQuadrant(int distance_in_x_phi, int distance_in_y_phi){
-    double temp = ((double)distance_in_y_phi/distance_in_x_phi);
-    double phi = atan(temp) * (180 / PI);
+    //double temp = ((double)distance_in_y_phi/distance_in_x_phi);
+    double phi = atan2(distance_in_y_phi,distance_in_x_phi) * (180 / PI);
     return phi;
 }
 
 double calculate_theta(double dx,double dy,double theta){
-    theta = theta + ((atan((double)dx/dy)) * (180 / PI));
+    theta = theta + ((atan2(dx,dy)) * (180 / PI));
     return theta;
 }
 
@@ -80,6 +90,12 @@ bool POI_sensor_test(){
     R.reset_sensors();
     R.sense_poi(P.x_position_poi, P.y_position_poi, P.value_poi);
     
+    if(R.sensors.at(0) != 0 && R.sensors.at(1) == 0 && R.sensors.at(2) ==0 && R.sensors.at(3) == 0){
+        pass1 = true;
+    }
+    
+    assert(pass1 == true);
+    
     if(VERBOSE){
     cout << "Direct north case: " << endl;
     for(int sen = 0; sen < R.sensors.size(); sen++){
@@ -95,6 +111,12 @@ bool POI_sensor_test(){
     // sense.
     R.reset_sensors();
     R.sense_poi(P.x_position_poi, P.y_position_poi, P.value_poi);
+    
+    if(R.sensors.at(0) == 0 && R.sensors.at(1) == 0 && R.sensors.at(2) !=0 && R.sensors.at(3) == 0){
+        pass2 = true;
+    }
+    
+    assert(pass2 == true);
     
     if(VERBOSE){
         cout << "Direct south case: " << endl;

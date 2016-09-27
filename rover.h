@@ -25,7 +25,7 @@
 #define PI 3.14159265
 
 using namespace std;
-
+double resolve(double angle);
 
 
 class Rover{
@@ -110,10 +110,9 @@ void Rover::reset_sensors(){
 }
 
 double Rover::find_phi(double x_sensed, double y_sensed){
-    double distance_in_x_phi = x_position - x_sensed;
-    double distance_in_y_phi = y_position - y_sensed;
-    double temp = ((double)distance_in_x_phi/distance_in_y_phi);
-    double phi = atan(temp) * (180 / PI);
+    double distance_in_x_phi =  x_sensed - x_position;
+    double distance_in_y_phi =  y_sensed - y_position;
+    double phi = atan2(distance_in_x_phi,distance_in_y_phi) * (180 / PI);
     return phi;
 }
 
@@ -121,6 +120,13 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     int quadrant;
     
     double phi = find_phi(x_sensed, y_sensed);
+    
+    cout << "IN QUAD: FIND PHI: " << phi << endl;
+    
+    phi = resolve(phi);
+    
+    
+    cout << "IN QUAD: FIND PHI2: " << phi << endl;
     
     int case_number;
     if ((0<=phi && 45>= phi)||(315<phi && 360>= phi)) {
@@ -137,6 +143,8 @@ int Rover::find_quad(double x_sensed, double y_sensed){
         case_number = 3;
     }
     quadrant = case_number;
+    
+    cout << "QUADRANT = " << quadrant << endl;
     
     return quadrant;
 }
