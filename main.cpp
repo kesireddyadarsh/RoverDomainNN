@@ -35,6 +35,10 @@ double calculate_theta(double dx,double dy,double theta){
     return theta;
 }
 
+void movement_rover(double phi,double theta){
+    double angle = phi-theta;
+}
+
 //This is main function
 int main(int argc, const char * argv[]) {
     // insert code here...
@@ -98,6 +102,7 @@ int main(int argc, const char * argv[]) {
         cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
         cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
         individualRover.phi = determineQuadrant(distance_in_x_phi,distance_in_y_phi);
+        movement_rover(individualRover.phi,individualRover.theta);
         individualRover.sensors.clear();
         individualRover.get_all_sensorvalues(individualPOI.x_position_poi, individualPOI.y_position_poi, x_position_otherRover, y_position_otherRover,individualRover.phi);
         
