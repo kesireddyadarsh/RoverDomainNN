@@ -34,8 +34,10 @@ public:
     double x_position,y_position,x_initial,y_initial;
     vector<double> sensors;
     vector<Net> singleneuralNetwork;
-    double sense_poi(double x_position_poi,double y_position_poi);
-    double sense_rover(double x_position_otherrover, double y_position_otherrover);
+    void sense_poi(double x, double y, double val);
+    void sense_rover(double x, double y);
+    double sense_poi_delta(double x_position_poi,double y_position_poi);
+    double sense_rover_delta(double x_position_otherrover, double y_position_otherrover);
     double initial_sense_poi(double x_position_poi,double y_position_poi);
     double initial_sense_rover(double x_position_otherrover, double y_position_otherrover);
     vector<double> controls;
@@ -44,7 +46,9 @@ public:
     double delta_x,delta_y;
     double theta;
     double phi;
-    void find_poi_quadrant(int x_position,int y_position);
+    void reset_sensors();
+    int find_quad(double x, double y);
+    double find_phi(double x, double y);
 };
 
 double Rover::initial_sense_poi(double x_position_poi,double y_position_poi){
@@ -66,7 +70,7 @@ double Rover::initial_sense_rover(double x_position_otherrover, double y_positio
 }
 
 //Function returns: sum of values of POIs divided by their distance
-double Rover::sense_poi(double x_position_poi,double y_position_poi ){
+double Rover::sense_poi_delta(double x_position_poi,double y_position_poi ){
     double delta_sense_poi=0;
     double distance = sqrt(pow(x_position-x_position_poi, 2)+pow(y_position-y_position_poi, 2));
     double minimum_observation_distance =0.0;
@@ -75,7 +79,7 @@ double Rover::sense_poi(double x_position_poi,double y_position_poi ){
 }
 
 //Function returns: sum of sqaure distance from a rover to all the other rovers in the quadrant
-double Rover::sense_rover(double x_position_otherrover, double y_position_otherrover){
+double Rover::sense_rover_delta(double x_position_otherrover, double y_position_otherrover){
     double delta_sense_rover=0.0;
     if (x_position_otherrover == NULL || y_position_otherrover == NULL) {
         return delta_sense_rover;
@@ -84,6 +88,57 @@ double Rover::sense_rover(double x_position_otherrover, double y_position_otherr
     delta_sense_rover=(1/distance);
     
     return delta_sense_rover;
+}
+
+void Rover::sense_poi(double poix, double poiy, double val){
+    double delta = sense_poi_delta(poix, poiy);
+    int quad = find_quad(poix,poiy);
+    sensors.at(quad) += val/delta;
+}
+
+void Rover::sense_rover(double otherx, double othery){
+    double delta = sense_poi_delta(otherx,othery);
+    int quad = find_quad(otherx,othery);
+    sensors.at(quad+4) += 1/delta;
+}
+
+void Rover::reset_sensors(){
+    sensors.clear();
+    for(int i=0; i<8; i++){
+        sensors.push_back(0.0);
+    }
+}
+
+double Rover::find_phi(double x_sensed, double y_sensed){
+    double distance_in_x_phi = x_position - x_sensed;
+    double distance_in_y_phi = y_position - y_sensed;
+    double temp = ((double)distance_in_x_phi/distance_in_y_phi);
+    double phi = atan(temp) * (180 / PI);
+    return phi;
+}
+
+int Rover::find_quad(double x_sensed, double y_sensed){
+    int quadrant;
+    
+    double phi = find_phi(x_sensed, y_sensed);
+    
+    int case_number;
+    if ((0<=phi && 45>= phi)||(315<phi && 360>= phi)) {
+        //do something in Q1
+        case_number = 0;
+    }else if ((45<phi && 135>= phi)) {
+        // do something in Q2
+        case_number = 1;
+    }else if((135<phi && 225>= phi)){
+        //do something in Q3
+        case_number = 2;
+    }else if((225<phi && 315>= phi)){
+        //do something in Q4
+        case_number = 3;
+    }
+    quadrant = case_number;
+    
+    return quadrant;
 }
 
 void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi){
@@ -107,13 +162,13 @@ void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,dou
     }
     for (int i=1; i<5; i++) {
         if (case_number == i) {
-            sensors.push_back(sense_poi(x_position_poi,y_position_poi));
+            //sensors.push_back(sense_poi(x_position_poi,y_position_poi));
         }else{
             sensors.push_back(0);
         }
     }
     for (int i=0; i<4; i++) {
-        sensors.push_back(sense_rover(x_position_otherrover,y_position_otherrover));
+        //sensors.push_back(sense_rover(x_position_otherrover,y_position_otherrover));
     }
 }
 
