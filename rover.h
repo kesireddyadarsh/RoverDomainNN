@@ -22,6 +22,8 @@
 #include "neuralNetwork.h"
 
 
+#define PI 3.14159265
+
 using namespace std;
 
 
@@ -39,7 +41,7 @@ public:
     void get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
     void get_all_sensorvalues_initial(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
     double delta_x,delta_y;
-    void teta();
+    
 };
 
 double Rover::initial_sense_poi(double x_position_poi,double y_position_poi){
@@ -52,6 +54,9 @@ double Rover::initial_sense_poi(double x_position_poi,double y_position_poi){
 
 double Rover::initial_sense_rover(double x_position_otherrover, double y_position_otherrover){
     double delta_sense_rover=0.0;
+    if (x_position_otherrover == NULL || y_position_otherrover == NULL) {
+        return delta_sense_rover;
+    }
     double distance = sqrt(pow(x_initial-x_position_otherrover, 2)+pow(y_initial-y_position_otherrover, 2));
     delta_sense_rover=(1/distance);
     return delta_sense_rover;
@@ -69,8 +74,12 @@ double Rover::sense_poi(double x_position_poi,double y_position_poi ){
 //Function returns: sum of sqaure distance from a rover to all the other rovers in the quadrant
 double Rover::sense_rover(double x_position_otherrover, double y_position_otherrover){
     double delta_sense_rover=0.0;
+    if (x_position_otherrover == NULL || y_position_otherrover == NULL) {
+        return delta_sense_rover;
+    }
     double distance = sqrt(pow(x_position-x_position_otherrover, 2)+pow(y_position-y_position_otherrover, 2));
     delta_sense_rover=(1/distance);
+    
     return delta_sense_rover;
 }
 
@@ -79,7 +88,7 @@ void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,dou
         sensors.push_back(sense_poi(x_position_poi, y_position_poi));
     }
     for (int i=0; i<4; i++) {
-        sensors.push_back(sense_poi(x_position_otherrover,y_position_otherrover));
+        sensors.push_back(sense_rover(x_position_otherrover,y_position_otherrover));
     }
 }
 
@@ -92,9 +101,7 @@ void Rover::get_all_sensorvalues_initial(double x_position_poi, double y_positio
     }
 }
 
-void Rover::teta(){
-    
-}
+
 
 
 #endif /* rover_h */
