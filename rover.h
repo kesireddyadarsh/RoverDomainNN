@@ -120,6 +120,9 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     int quadrant;
     
     double phi = find_phi(x_sensed, y_sensed);
+    phi = resolve(phi);
+    double quadrant_angle = phi - theta;
+    quadrant_angle = resolve(quadrant_angle);
     
     cout << "IN QUAD: FIND PHI: " << phi << endl;
     
@@ -128,21 +131,22 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     cout << "IN QUAD: FIND PHI2: " << phi << endl;
     
     int case_number;
-    if ((0<=phi && 45>= phi)||(315<phi && 360>= phi)) {
+    if ((0<=quadrant_angle && 45>= quadrant_angle)||(315<quadrant_angle && 360>= quadrant_angle)) {
         //do something in Q1
         case_number = 0;
-    }else if ((45<phi && 135>= phi)) {
+    }else if ((45<quadrant_angle && 135>= quadrant_angle)) {
         // do something in Q2
         case_number = 1;
-    }else if((135<phi && 225>= phi)){
+    }else if((135<quadrant_angle && 225>= quadrant_angle)){
         //do something in Q3
         case_number = 2;
-    }else if((225<phi && 315>= phi)){
+    }else if((225<quadrant_angle && 315>= quadrant_angle)){
         //do something in Q4
         case_number = 3;
     }
     quadrant = case_number;
     
+    cout << "QUADANGLE =  " << quadrant_angle << endl;
     cout << "QUADRANT = " << quadrant << endl;
     
     return quadrant;

@@ -6,8 +6,6 @@
 //  Copyright © 2016 adarsh kesireddy. All rights reserved.
 //
 
-//Test line git hub -adarsh
-
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -163,8 +161,6 @@ bool POI_sensor_test(){
         pass4 = true;
     }
     
-    assert(pass4 == true);
-    
     if(VERBOSE){
         cout << "Direct west case: " << endl;
         for(int sen = 0; sen < R.sensors.size(); sen++){
@@ -172,7 +168,7 @@ bool POI_sensor_test(){
         }
         cout << endl;
     }
-
+    assert(pass4 == true);
     
     
     if(pass1 && pass2 && pass3 && pass4){
@@ -272,9 +268,9 @@ int main(int argc, const char * argv[]) {
     //Try to move Neural network in to header
     srand((unsigned)time(NULL));
     
-    //POI_sensor_test();
-    //rover_sensor_test();
-    custom_test();
+    POI_sensor_test();
+    rover_sensor_test();
+    //custom_test();
     
     //Create numNN of neural network
     int numNN=100;
