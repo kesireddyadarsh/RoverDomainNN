@@ -38,13 +38,7 @@ int main(int argc, const char * argv[]) {
     topology.push_back(10);
     topology.push_back(2);
     Population mypop(numNN,topology);
-//    cout<<"This is size of neural networks::"<<mypop.popVector.size()<<endl;
-//    cout<<"This is size of layer ::"<<mypop.popVector.at(10).z_layer.at(0).size()<<endl;
-//    for (int i=0; i<mypop.popVector.size(); i++) {
-//        cout<<"This is weight"<<mypop.popVector.at(10).z_layer.at(0)<<endl;
-//    }
-//    cout<<"This is weight of connection:::"<<mypop.popVector.at(10).z_layer.at(0).size()<<endl;
-
+    
     //Create values for Rover;
     int x_position_otherRover=NULL;
     int y_position_otherRover=NULL;
@@ -65,7 +59,7 @@ int main(int argc, const char * argv[]) {
     //run the rover sensors all 8
     individualRover.x_position=1;
     individualRover.y_position=1;
-    
+    individualRover.theta = 90 ; //radians
     individualRover.get_all_sensorvalues(individualPOI.x_position_poi, individualPOI.y_position_poi, x_position_otherRover, y_position_otherRover);
     
     for (int i=0; i<individualRover.sensors.size(); i++) {

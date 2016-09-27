@@ -41,7 +41,7 @@ public:
     void get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
     void get_all_sensorvalues_initial(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
     double delta_x,delta_y;
-    
+    double theta;
 };
 
 double Rover::initial_sense_poi(double x_position_poi,double y_position_poi){
