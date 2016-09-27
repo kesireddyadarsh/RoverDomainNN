@@ -27,10 +27,11 @@
 using namespace std;
 
 
+
 class Rover{
+    //Environment environment_object;
 public:
     double x_position,y_position,x_initial,y_initial;
-    // double x_position,y_position;
     vector<double> sensors;
     vector<Net> singleneuralNetwork;
     double sense_poi(double x_position_poi,double y_position_poi);
@@ -38,10 +39,12 @@ public:
     double initial_sense_poi(double x_position_poi,double y_position_poi);
     double initial_sense_rover(double x_position_otherrover, double y_position_otherrover);
     vector<double> controls;
-    void get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
+    void get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi);
     void get_all_sensorvalues_initial(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
     double delta_x,delta_y;
     double theta;
+    double phi;
+    void find_poi_quadrant(int x_position,int y_position);
 };
 
 double Rover::initial_sense_poi(double x_position_poi,double y_position_poi){
@@ -83,9 +86,31 @@ double Rover::sense_rover(double x_position_otherrover, double y_position_otherr
     return delta_sense_rover;
 }
 
-void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover){
-    for (int i=0; i<4; i++) {
-        sensors.push_back(sense_poi(x_position_poi, y_position_poi));
+void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi){
+    cout<<"THis is phi value:::"<<phi<<endl;
+    if (phi>360) {
+        phi = phi-360;
+    }
+    int case_number = 0;
+    if ((0<=phi && 45>= phi)||(315<phi && 360>= phi)) {
+        //do something in Q1
+        case_number = 1;
+    }else if ((45<phi && 135>= phi)) {
+        // do something in Q2
+        case_number = 2;
+    }else if((135<phi && 225>= phi)){
+        //do something in Q3
+        case_number = 3;
+    }else if((225<phi && 315>= phi)){
+        //do something in Q4
+        case_number = 4;
+    }
+    for (int i=1; i<5; i++) {
+        if (case_number == i) {
+            sensors.push_back(sense_poi(x_position_poi,y_position_poi));
+        }else{
+            sensors.push_back(0);
+        }
     }
     for (int i=0; i<4; i++) {
         sensors.push_back(sense_rover(x_position_otherrover,y_position_otherrover));

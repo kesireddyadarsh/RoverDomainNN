@@ -28,6 +28,7 @@ using namespace std;
 class POI{
 public:
     double x_position_poi,y_position_poi,value_poi;
+    //Environment test;
     //vector<Rover> individualRover;
 };
 

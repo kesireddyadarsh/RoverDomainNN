@@ -13,15 +13,22 @@
 #include <cassert>
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 #include "environment.h"
 #include "POI.h"
 #include "evolutionAlgorithm.h"
 #include "rover.h"
 #include "neuralNetwork.h"
 
+#define PI 3.14159265
 
 using namespace std;
 
+double determineQuadrant(int distance_in_x_phi, int distance_in_y_phi){
+    double temp = ((double)distance_in_y_phi/distance_in_x_phi);
+    double phi = atan(temp) * (180 / PI);
+    return phi;
+}
 
 //This is main function
 int main(int argc, const char * argv[]) {
@@ -46,8 +53,8 @@ int main(int argc, const char * argv[]) {
     Environment world;
     //Set values of poi's
     POI individualPOI;
-    individualPOI.x_position_poi=30;
-    individualPOI.y_position_poi=50;
+    individualPOI.x_position_poi=30.0;
+    individualPOI.y_position_poi=50.0;
     individualPOI.value_poi=100;
     
     
@@ -57,10 +64,16 @@ int main(int argc, const char * argv[]) {
     //import weight into rovers
     Rover individualRover;
     //run the rover sensors all 8
-    individualRover.x_position=1;
-    individualRover.y_position=1;
-    individualRover.theta = 90 ; //radians
-    individualRover.get_all_sensorvalues(individualPOI.x_position_poi, individualPOI.y_position_poi, x_position_otherRover, y_position_otherRover);
+    individualRover.x_position=1.0;
+    individualRover.y_position=1.0;
+    individualRover.theta = 0.0 ; //radians
+    double distance_in_x_phi= individualPOI.x_position_poi-individualRover.x_position;
+    double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
+    cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
+    cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
+    individualRover.phi = determineQuadrant(distance_in_x_phi,distance_in_y_phi);
+    cout<<"this is phi value in main::::"<<individualRover.phi<<endl;
+    individualRover.get_all_sensorvalues(individualPOI.x_position_poi, individualPOI.y_position_poi, x_position_otherRover, y_position_otherRover,individualRover.phi);
     
     for (int i=0; i<individualRover.sensors.size(); i++) {
         cout<<"This is sensor value:::"<<individualRover.sensors.at(i)<<endl;
