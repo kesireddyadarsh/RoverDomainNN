@@ -130,9 +130,47 @@ bool POI_sensor_test(){
     P.x_position_poi = 1;
     P.y_position_poi = 0;
     
+    // sense.
+    R.reset_sensors();
+    R.sense_poi(P.x_position_poi, P.y_position_poi, P.value_poi);
+    
+    if(R.sensors.at(0) == 0 && R.sensors.at(1) != 0 && R.sensors.at(2) ==0 && R.sensors.at(3) == 0){
+        pass3 = true;
+    }
+    
+    assert(pass3 == true);
+    
+    if(VERBOSE){
+        cout << "Direct east case: " << endl;
+        for(int sen = 0; sen < R.sensors.size(); sen++){
+            cout << R.sensors.at(sen) << "\t";
+        }
+        cout << endl;
+    }
+
+    
     /// POI directly west, sensor 3 should read; no others.
     P.x_position_poi = -1;
     P.y_position_poi = 0;
+    
+    // sense.
+    R.reset_sensors();
+    R.sense_poi(P.x_position_poi, P.y_position_poi, P.value_poi);
+    
+    if(R.sensors.at(0) == 0 && R.sensors.at(1) == 0 && R.sensors.at(2) ==0 && R.sensors.at(3) != 0){
+        pass4 = true;
+    }
+    
+    assert(pass4 == true);
+    
+    if(VERBOSE){
+        cout << "Direct west case: " << endl;
+        for(int sen = 0; sen < R.sensors.size(); sen++){
+            cout << R.sensors.at(sen) << "\t";
+        }
+        cout << endl;
+    }
+
     
     
     if(pass1 && pass2 && pass3 && pass4){
