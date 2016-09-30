@@ -31,18 +31,15 @@ double resolve(double angle);
 class Rover{
     //Environment environment_object;
 public:
-    double x_position,y_position,x_initial,y_initial;
+    double x_position,y_position;
     vector<double> sensors;
     vector<Net> singleneuralNetwork;
     void sense_poi(double x, double y, double val);
     void sense_rover(double x, double y);
     double sense_poi_delta(double x_position_poi,double y_position_poi);
     double sense_rover_delta(double x_position_otherrover, double y_position_otherrover);
-    double initial_sense_poi(double x_position_poi,double y_position_poi);
-    double initial_sense_rover(double x_position_otherrover, double y_position_otherrover);
     vector<double> controls;
     void get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi);
-    void get_all_sensorvalues_initial(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover);
     double delta_x,delta_y;
     double theta;
     double phi;
@@ -50,24 +47,6 @@ public:
     int find_quad(double x, double y);
     double find_phi(double x, double y);
 };
-
-double Rover::initial_sense_poi(double x_position_poi,double y_position_poi){
-    double delta=0;
-    double distance = sqrt(pow(x_initial-x_position_poi, 2)+pow(y_initial-y_position_poi, 2));
-    double minimum_observation_distance =0.0;
-    delta=(distance>minimum_observation_distance)?distance:minimum_observation_distance ;
-    return delta;
-}
-
-double Rover::initial_sense_rover(double x_position_otherrover, double y_position_otherrover){
-    double delta_sense_rover=0.0;
-    if (x_position_otherrover == NULL || y_position_otherrover == NULL) {
-        return delta_sense_rover;
-    }
-    double distance = sqrt(pow(x_initial-x_position_otherrover, 2)+pow(y_initial-y_position_otherrover, 2));
-    delta_sense_rover=(1/distance);
-    return delta_sense_rover;
-}
 
 //Function returns: sum of values of POIs divided by their distance
 double Rover::sense_poi_delta(double x_position_poi,double y_position_poi ){
@@ -180,15 +159,6 @@ void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,dou
     }
     for (int i=0; i<4; i++) {
         //sensors.push_back(sense_rover(x_position_otherrover,y_position_otherrover));
-    }
-}
-
-void Rover::get_all_sensorvalues_initial(double x_position_poi, double y_position_poi, double x_position_otherrover, double y_position_otherrover){
-    for (int i=0; i<4; i++) {
-        sensors.push_back(initial_sense_poi(x_position_poi, y_position_poi));
-    }
-    for (int i=0; i<4; i++) {
-        sensors.push_back(initial_sense_poi(x_position_otherrover,y_position_otherrover));
     }
 }
 
