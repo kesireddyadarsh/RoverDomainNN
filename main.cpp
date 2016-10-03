@@ -261,6 +261,10 @@ void custom_test(){
     
 }
 
+//x and y position of poi
+vector<vector<double>> poi_positions;
+vector<double> poi_positions_loc;
+
 void stationary_rover_test(double x_start,double y_start){//Pass x_position,y_position
     Rover R_obj; //Rover object
     POI P_obj;
@@ -280,47 +284,100 @@ void stationary_rover_test(double x_start,double y_start){//Pass x_position,y_po
     
     P_obj.value_poi=100;
     
+    int quad_0=0,quad_1=0,quad_2=0,quad_3=0,quad_0_1=0;
     while (angle<360) {
+        if ((0<=angle && 45>= angle)) {
+            quad_0++;
+        }else if ((45<angle && 135>= angle)) {
+            // do something in Q2
+            quad_1++;
+        }else if((135<angle && 225>= angle)){
+            //do something in Q3
+            quad_2++;
+        }else if((225<angle && 315>= angle)){
+            //do something in Q4
+            quad_3++;
+        }else if ((315<angle && 360> angle)){
+            quad_0_1++;
+        }
         poi_positions_loc.push_back(R_obj.x_position+(radius*cos(angle * (PI /180))));
         poi_positions_loc.push_back(R_obj.y_position+(radius*sin(angle * (PI /180))));
         poi_positions.push_back(poi_positions_loc);
         poi_positions_loc.clear();
         angle+=5;
     }
-    /*cout<<endl;
-    for (int i=0; i<poi_positions.size(); i++) {
-        for (int j=0; j<poi_positions.at(i).size(); j++) {
-            cout<< poi_positions.at(i).at(j)<<"\t";
-        }
-        cout<<endl;
-    }*/
-
-    /*vector<bool> checkPass;
-    P_obj.x_position_poi = -0.174311;//1.99239	0.174311
-    P_obj.y_position_poi = 1.99239;
-    R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
-    cout<<endl;
-    for (int i=0; i<R_obj.sensors.size(); i++) {
-        cout<<R_obj.sensors.at(i)<<"\t";
-    }
-    R_obj.reset_sensors();*/
+    
+    vector<bool> checkPass_quad_1,checkPass_quad_2,checkPass_quad_3,checkPass_quad_0;
     
     for (int i=0; i<poi_positions.size(); i++) {
         for (int j=0; j<poi_positions.at(i).size(); j++) {
             P_obj.x_position_poi = poi_positions.at(i).at(j);
-            cout<<endl;
-            cout<<"This is x position"<<poi_positions.at(i).at(j)<<endl;
             P_obj.y_position_poi = poi_positions.at(i).at(++j);
-            cout<<"This is y position"<<poi_positions.at(i).at(j)<<endl;
             R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
-            for (int i=0; i<R_obj.sensors.size(); i++) {
-                cout<<R_obj.sensors.at(i)<<"\t";
+            if (R_obj.sensors.at(0) != 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) == 0) {
+                checkPass_quad_0.push_back(true);
+            }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) != 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) == 0){
+                checkPass_quad_1.push_back(true);
+            }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) !=0 && R_obj.sensors.at(3) == 0){
+                checkPass_quad_2.push_back(true);
+            }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) != 0){
+                checkPass_quad_3.push_back(true);
             }
             R_obj.reset_sensors();
         }
     }
+    if (checkPass_quad_0.size() != (quad_0_1+quad_0)) {
+        cout<<"Something wrong with quad_0"<<endl;;
+    }else if (checkPass_quad_1.size() != (quad_1)){
+        cout<<"Something wrong with quad_1"<<endl;
+    }else if (checkPass_quad_2.size() != quad_2){
+        cout<<"Something wrong with quad_2"<<endl;
+    }else if (checkPass_quad_3.size() != quad_3){
+        cout<<"Something wrong with quad_3"<<endl;
+    }
 }
 
+void find_x_y(double angle, double radius, double x_position, double y_position){
+    poi_positions_loc.push_back(x_position+(radius*cos(angle * (PI /180))));
+    poi_positions_loc.push_back(y_position+(radius*sin(angle * (PI /180))));
+}
+
+void stationary_rover_test_1(double x_start,double y_start){
+    Rover R_obj; //Rover object
+    POI P_obj;
+    
+    R_obj.reset_sensors();
+    
+    R_obj.x_position =x_start;
+    R_obj.y_position=y_start;
+    R_obj.theta=0.0;
+    int radius = 2;
+    
+    double x = 0,y=0,angle=0;
+    
+    P_obj.value_poi=100;
+    
+    while (angle<360) {
+        find_x_y(angle, radius, R_obj.x_position, R_obj.y_position);
+        P_obj.x_position_poi = poi_positions_loc.at(0);
+        P_obj.y_position_poi = poi_positions_loc.at(1);
+        R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
+        if (R_obj.sensors.at(0) != 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) == 0) {
+            cout<<"Pass Quad 0"<<endl;
+        }else  if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) != 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) == 0) {
+                cout<<"Pass Quad 1";
+            }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) !=0 && R_obj.sensors.at(3) == 0) {
+                cout<<"Pass Quad 2";
+            }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) != 0) {
+                cout<<"Pass Quad 3";
+            }else{
+                cout<<"Issue at an angle ::"<<angle<<" with x_position and y_position"<<R_obj.x_position<<R_obj.y_position<<endl;
+            }
+        poi_positions_loc.clear();
+        R_obj.reset_sensors();
+        angle+=5;
+    }
+}
 
 //This is main function
 int main(int argc, const char * argv[]) {
@@ -332,7 +389,8 @@ int main(int argc, const char * argv[]) {
     //rover_sensor_test();
     //custom_test();
     double x_start = 0.0, y_start = 0.0;
-    stationary_rover_test(x_start,y_start);
+    //stationary_rover_test(x_start,y_start);
+    stationary_rover_test_1(x_start, y_start);
     
     
     /*//Create numNN of neural network
