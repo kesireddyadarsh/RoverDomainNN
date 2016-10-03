@@ -91,7 +91,7 @@ void Rover::reset_sensors(){
 double Rover::find_phi(double x_sensed, double y_sensed){
     double distance_in_x_phi =  x_sensed - x_position;
     double distance_in_y_phi =  y_sensed - y_position;
-    double phi = atan2(distance_in_x_phi,distance_in_y_phi) * (180 / PI);
+    double phi = atan2(distance_in_y_phi,distance_in_x_phi) * (180 / PI);
     return phi;
 }
 
@@ -99,10 +99,8 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     int quadrant;
     
     double phi = find_phi(x_sensed, y_sensed);
-    phi = resolve(phi);
     double quadrant_angle = phi - theta;
     quadrant_angle = resolve(quadrant_angle);
-    
     cout << "IN QUAD: FIND PHI: " << phi << endl;
     
     phi = resolve(phi);

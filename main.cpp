@@ -273,6 +273,7 @@ void stationary_rover_test(double x_start,double y_start){//Pass x_position,y_po
     
     R_obj.x_position =x_start;
     R_obj.y_position=y_start;
+    R_obj.theta=0.0;
     int radius = 2;
     
     double x = 0,y=0,angle=0;
@@ -280,48 +281,41 @@ void stationary_rover_test(double x_start,double y_start){//Pass x_position,y_po
     P_obj.value_poi=100;
     
     while (angle<360) {
-        cout<<"This is the angle:::"<<angle<<endl;
         poi_positions_loc.push_back(R_obj.x_position+(radius*cos(angle * (PI /180))));
         poi_positions_loc.push_back(R_obj.y_position+(radius*sin(angle * (PI /180))));
         poi_positions.push_back(poi_positions_loc);
         poi_positions_loc.clear();
         angle+=5;
     }
-    //sort(poi_positions.begin(), poi_positions.end());
-//    for (int i=0; i<poi_positions.size(); i++) {
-//        for (int j=0; j<poi_positions.at(i).size(); j++) {
-//            cout<<poi_positions.at(i).at(j)<<"\t";
-//        }
-//        cout<<endl;
-//    }
-//    
-    
-//    double number_of_pts = 360/5;
-//    int check_quad =0;
-    
-//    cout<<"This are number of points:::"<<poi_positions.size()<<endl;
-//    cout<<"This are number of points::"<<number_of_pts<<endl;
-    
-    vector<bool> checkPass;
+    /*cout<<endl;
+    for (int i=0; i<poi_positions.size(); i++) {
+        for (int j=0; j<poi_positions.at(i).size(); j++) {
+            cout<< poi_positions.at(i).at(j)<<"\t";
+        }
+        cout<<endl;
+    }*/
+
+    /*vector<bool> checkPass;
+    P_obj.x_position_poi = -0.174311;//1.99239	0.174311
+    P_obj.y_position_poi = 1.99239;
+    R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
+    cout<<endl;
+    for (int i=0; i<R_obj.sensors.size(); i++) {
+        cout<<R_obj.sensors.at(i)<<"\t";
+    }
+    R_obj.reset_sensors();*/
     
     for (int i=0; i<poi_positions.size(); i++) {
         for (int j=0; j<poi_positions.at(i).size(); j++) {
             P_obj.x_position_poi = poi_positions.at(i).at(j);
-            P_obj.y_position_poi = poi_positions.at(i).at(j++);
+            cout<<endl;
+            cout<<"This is x position"<<poi_positions.at(i).at(j)<<endl;
+            P_obj.y_position_poi = poi_positions.at(i).at(++j);
+            cout<<"This is y position"<<poi_positions.at(i).at(j)<<endl;
             R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
             for (int i=0; i<R_obj.sensors.size(); i++) {
                 cout<<R_obj.sensors.at(i)<<"\t";
             }
-//            cout<<endl;
-//            if () {
-//                
-//            }else if (){
-//                
-//            }else if (){
-//                
-//            }else{
-//                
-//            }
             R_obj.reset_sensors();
         }
     }
