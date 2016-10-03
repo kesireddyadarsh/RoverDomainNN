@@ -379,6 +379,39 @@ void stationary_rover_test_1(double x_start,double y_start){
     }
 }
 
+void stationary_poi_test(double x_start,double y_start){
+    Rover R_obj; //Rover object
+    POI P_obj; // POI object
+    vector<double> rover_position_loc;
+    
+    R_obj.reset_sensors();
+    
+    P_obj.x_position_poi=x_start;
+    P_obj.y_position_poi=y_start;
+    P_obj.value_poi=100;
+    R_obj.theta=0.0;
+    int radius = 2;
+    
+    double angle=0;
+    
+    P_obj.value_poi=100;
+    
+    while (angle<360) {
+        rover_position_loc.push_back(P_obj.x_position_poi+(radius*cos(angle * (PI /180))));
+        rover_position_loc.push_back(P_obj.y_position_poi+(radius*sin(angle * (PI /180))));
+        R_obj.x_position = rover_position_loc.at(0);
+        R_obj.y_position = rover_position_loc.at(1);
+        R_obj.sense_poi(P_obj.x_position_poi,P_obj.y_position_poi,P_obj.value_poi);
+        cout<<endl;
+        for (int i=0; i<R_obj.sensors.size(); i++) {
+            cout<<R_obj.sensors.at(i)<<"\t";
+        }
+        cout<<endl;
+        rover_position_loc.clear();
+        R_obj.reset_sensors();
+        angle+=5;
+    }
+}
 //This is main function
 int main(int argc, const char * argv[]) {
     // insert code here...
@@ -390,8 +423,9 @@ int main(int argc, const char * argv[]) {
     //custom_test();
     double x_start = 0.0, y_start = 0.0;
     //stationary_rover_test(x_start,y_start);
-    stationary_rover_test_1(x_start, y_start);
+    //stationary_rover_test_1(x_start, y_start);
     
+    stationary_poi_test(x_start,y_start);
     
     /*//Create numNN of neural network
     int numNN=100;
