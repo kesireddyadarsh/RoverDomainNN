@@ -412,6 +412,46 @@ void stationary_poi_test(double x_start,double y_start){
         angle+=5;
     }
 }
+
+void two_rovers_test(double x_start, double y_start){
+    Rover R_obj; //Rover object
+    POI P_obj; // POI object
+    vector<double> rover_position_loc;
+    
+    R_obj.reset_sensors();
+    
+    R_obj.x_position=x_start;
+    R_obj.y_position=y_start;
+    
+    R_obj.theta=0.0;
+    int radius = 2;
+    double angle=0;
+    
+    while (angle<360) {
+        rover_position_loc.push_back(R_obj.x_position+(radius*cos(angle * (PI /180))));
+        rover_position_loc.push_back(R_obj.y_position+(radius*sin(angle * (PI /180))));
+        R_obj.sense_rover(rover_position_loc.at(0),rover_position_loc.at(1));
+        cout<<endl;
+        for (int i=0; i<R_obj.sensors.size(); i++) {
+            cout<<R_obj.sensors.at(i)<<"\t";
+        }
+        cout<<endl;
+        if (R_obj.sensors.at(4) != 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) == 0) {
+            cout<<"Pass Quad 0"<<endl;
+        }else  if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) != 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) == 0) {
+            cout<<"Pass Quad 1";
+        }else if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) !=0 && R_obj.sensors.at(7) == 0) {
+            cout<<"Pass Quad 2";
+        }else if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) != 0) {
+            cout<<"Pass Quad 3";
+        }else{
+            cout<<"Issue at an angle ::"<<angle<<" with x_position and y_position"<<R_obj.x_position<<R_obj.y_position<<endl;
+        }
+        rover_position_loc.clear();
+        R_obj.reset_sensors();
+        angle+=5;
+    }
+}
 //This is main function
 int main(int argc, const char * argv[]) {
     // insert code here...
@@ -424,8 +464,8 @@ int main(int argc, const char * argv[]) {
     double x_start = 0.0, y_start = 0.0;
     //stationary_rover_test(x_start,y_start);
     //stationary_rover_test_1(x_start, y_start);
-    
-    stationary_poi_test(x_start,y_start);
+    //stationary_poi_test(x_start,y_start);
+    two_rovers_test(x_start,y_start);
     
     /*//Create numNN of neural network
     int numNN=100;
