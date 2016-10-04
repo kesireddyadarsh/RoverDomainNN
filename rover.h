@@ -39,7 +39,7 @@ public:
     double sense_poi_delta(double x_position_poi,double y_position_poi);
     double sense_rover_delta(double x_position_otherrover, double y_position_otherrover);
     vector<double> controls;
-    void get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi);
+    //void get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi);
     double delta_x,delta_y;
     double theta;
     double phi;
@@ -47,6 +47,7 @@ public:
     int find_quad(double x, double y);
     double find_phi(double x, double y);
     double find_theta(double x_sensed, double y_sensed);
+    void move_rover(double dx, double dy,double theta);
 };
 
 //Function returns: sum of values of POIs divided by their distance
@@ -135,6 +136,12 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     cout << "QUADRANT = " << quadrant << endl;
     
     return quadrant;
+}
+
+void Rover::move_rover(double dx, double dy,double theta){
+    x_position =(x_position)+ (dy* cos(theta))+(dx *sin(theta));
+    y_position =(y_position)+ (dy* sin(theta))+(dx *cos(theta));
+    theta += atan2(dx,dy) * (180 / PI);
 }
 
 
