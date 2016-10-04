@@ -514,6 +514,27 @@ void test_path(double x_start, double y_start){
     cout<<"This is new y_position::"<<R_obj.y_position<<endl;
     cout<<"This is theta::"<<R_obj.theta<<endl;
     
+    dx=0.0;
+    dy=1.0;
+    R_obj.move_rover(dx, dy, R_obj.theta);
+    cout<<"THis is new x_position::"<<R_obj.x_position<<endl;
+    cout<<"This is new y_position::"<<R_obj.y_position<<endl;
+    cout<<"This is theta::"<<R_obj.theta<<endl;
+    
+    dx=-1.0;
+    dy=1.0;
+    R_obj.move_rover(dx, dy, R_obj.theta);
+    cout<<"THis is new x_position::"<<R_obj.x_position<<endl;
+    cout<<"This is new y_position::"<<R_obj.y_position<<endl;
+    cout<<"This is theta::"<<R_obj.theta<<endl;
+    
+    dx=0.0;
+    dy=1.0;
+    R_obj.move_rover(dx, dy, R_obj.theta);
+    cout<<"THis is new x_position::"<<R_obj.x_position<<endl;
+    cout<<"This is new y_position::"<<R_obj.y_position<<endl;
+    cout<<"This is theta::"<<R_obj.theta<<endl;
+    
 }
 
 void test_all_sensors(){
@@ -535,7 +556,7 @@ int main(int argc, const char * argv[]) {
     //Try to move Neural network in to header
     srand((unsigned)time(NULL));
     test_all_sensors();
-    
+    cout<<"Done!!!"<<endl;
     
     /*//Create numNN of neural network
     int numNN=100;

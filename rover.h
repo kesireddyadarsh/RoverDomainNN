@@ -139,9 +139,12 @@ int Rover::find_quad(double x_sensed, double y_sensed){
 }
 
 void Rover::move_rover(double dx, double dy,double theta){
-    x_position =(x_position)+ (dy* cos(theta))+(dx *sin(theta));
-    y_position =(y_position)+ (dy* sin(theta))+(dx *cos(theta));
-    theta += atan2(dx,dy) * (180 / PI);
+    //cout<<"This is inverse tan::"<<(atan2(dx,dy) * (180 / PI))<<endl;
+    x_position =(x_position)+  (dy* sin(theta))+(dx *cos(theta));
+    y_position =(y_position)+ (dy* cos(theta))+(dx *sin(theta));
+    theta = theta +  (atan2(dx,dy) * (180 / PI));
+    resolve(theta);
+    cout<<"This is inverse tan in move_rover function::"<<resolve(theta)<<endl;
 }
 
 
