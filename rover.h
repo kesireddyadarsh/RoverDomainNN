@@ -46,6 +46,7 @@ public:
     void reset_sensors();
     int find_quad(double x, double y);
     double find_phi(double x, double y);
+    double find_theta(double x_sensed, double y_sensed);
 };
 
 //Function returns: sum of values of POIs divided by their distance
@@ -95,6 +96,13 @@ double Rover::find_phi(double x_sensed, double y_sensed){
     return phi;
 }
 
+double Rover::find_theta(double x_sensed, double y_sensed){
+    double distance_in_x_theta =  x_sensed - x_position;
+    double distance_in_y_theta =  y_sensed - y_position;
+    theta += atan2(distance_in_x_theta,distance_in_y_theta) * (180 / PI);
+    return phi;
+}
+
 int Rover::find_quad(double x_sensed, double y_sensed){
     int quadrant;
     
@@ -129,6 +137,9 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     return quadrant;
 }
 
+
+
+/*
 void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi){
     cout<<"THis is phi value:::"<<phi<<endl;
     if (phi>360) {
@@ -158,7 +169,7 @@ void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,dou
     for (int i=0; i<4; i++) {
         //sensors.push_back(sense_rover(x_position_otherrover,y_position_otherrover));
     }
-}
+}*/
 
 
 

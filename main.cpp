@@ -498,6 +498,45 @@ void two_rovers_test(double x_start, double y_start){
 
 }
 
+void test_path(double x_start, double y_start){
+     Rover R_obj;
+     POI P_obj;
+    
+    //given
+    R_obj.x_position=0.0;
+    R_obj.y_position=0.0;
+    //R_obj.theta=0.0;
+    
+    double dx=0.0,dy=1.0;
+    
+    P_obj.x_position_poi=0.0;
+    P_obj.y_position_poi=1.0;
+    
+    
+    //find Theta
+    R_obj.find_theta(dx, dy);
+    cout<<"This is thetha::"<<R_obj.theta<<endl;
+    //Aftermovement
+    R_obj.x_position+=dx;
+    R_obj.y_position+=dy;
+    cout<<"This is x_position"<<R_obj.x_position<<endl;
+    cout<<"This is y_position"<<R_obj.y_position<<endl;
+    
+    dx=1.0;
+    dy=1.0;
+    
+    //find Theta
+    R_obj.find_theta(dx, dy);
+    cout<<"This is thetha::"<<R_obj.theta<<endl;
+    //Aftermovement
+    R_obj.x_position+=dx;
+    R_obj.y_position+=dy;
+    cout<<"This is x_position"<<R_obj.x_position<<endl;
+    cout<<"This is y_position"<<R_obj.y_position<<endl;
+    
+    
+}
+
 //This is main function
 int main(int argc, const char * argv[]) {
     // insert code here...
@@ -507,11 +546,12 @@ int main(int argc, const char * argv[]) {
     //POI_sensor_test();
     //rover_sensor_test();
     //custom_test();
-    double x_start = 10.0, y_start = 10.0;
+    double x_start = 0.0, y_start = 0.0;
     //stationary_rover_test(x_start,y_start);
     //stationary_rover_test_1(x_start, y_start);
     //stationary_poi_test(x_start,y_start);
-    two_rovers_test(x_start,y_start);
+    //two_rovers_test(x_start,y_start);
+    test_path(x_start,y_start);
     
     /*//Create numNN of neural network
     int numNN=100;
