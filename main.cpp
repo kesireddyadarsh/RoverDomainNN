@@ -448,7 +448,7 @@ void two_rovers_test(double x_start, double y_start){
     double otherRover_x=x_start;
     double otherRover_y=y_start;
     P_obj.value_poi=100;
-    R_obj.theta=0.0;
+    R_obj.theta=15.0;
     
     R_obj.x_position =0.0;
     R_obj.y_position =0.0;
@@ -466,17 +466,26 @@ void two_rovers_test(double x_start, double y_start){
         }
         cout<<endl;
         if (R_obj.sensors.at(4) != 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) == 0) {
-            cout<<"Pass Quad 0"<<endl;
-            check_pass = true;
+            if ((0<=R_obj.theta && 45>= R_obj.theta)||(315<R_obj.theta && 360>= R_obj.theta)) {
+                cout<<"Pass Quad 0"<<endl;
+                check_pass = true;
+            }
+            
         }else  if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) != 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) == 0) {
-            cout<<"Pass Quad 1";
-            check_pass = true;
+            if((45<R_obj.theta && 135>= R_obj.theta)){
+                cout<<"Pass Quad 1";
+                check_pass = true;
+            }
         }else if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) !=0 && R_obj.sensors.at(7) == 0) {
-            cout<<"Pass Quad 2";
-            check_pass = true;
+            if((135<R_obj.theta && 225>= R_obj.theta)){
+                cout<<"Pass Quad 2";
+                check_pass = true;
+            }
         }else if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) != 0) {
-            cout<<"Pass Quad 3";
-            check_pass = true;
+            if((225<R_obj.theta && 315>= R_obj.theta)){
+                cout<<"Pass Quad 3";
+                check_pass = true;
+            }
         }else{
             cout<<"Issue at an angle ::"<<R_obj.theta<<" with x_position and y_position"<<P_obj.x_position_poi<<P_obj.y_position_poi<<endl;
             exit(10);
