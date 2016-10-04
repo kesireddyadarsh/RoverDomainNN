@@ -445,37 +445,48 @@ void two_rovers_test(double x_start, double y_start){
     
     R_obj.reset_sensors();
     
-    R_obj.x_position=x_start;
-    R_obj.y_position=y_start;
-    
+    double otherRover_x=x_start;
+    double otherRover_y=y_start;
+    P_obj.value_poi=100;
     R_obj.theta=0.0;
-    int radius = 2;
-    double angle=0;
     
-    while (angle<360) {
-        rover_position_loc.push_back(R_obj.x_position+(radius*cos(angle * (PI /180))));
-        rover_position_loc.push_back(R_obj.y_position+(radius*sin(angle * (PI /180))));
-        R_obj.sense_rover(rover_position_loc.at(0),rover_position_loc.at(1));
+    R_obj.x_position =0.0;
+    R_obj.y_position =0.0;
+    
+    bool check_pass = false;
+    
+    for (int i=0; i<=R_obj.theta; ) {
+        if (R_obj.theta > 360) {
+            break;
+        }
+        R_obj.sense_rover(otherRover_x, otherRover_y);
         cout<<endl;
-        for (int i=0; i<R_obj.sensors.size(); i++) {
-            cout<<R_obj.sensors.at(i)<<"\t";
+        for (int j=0; j<R_obj.sensors.size(); j++) {
+            cout<<R_obj.sensors.at(j)<<"\t";
         }
         cout<<endl;
         if (R_obj.sensors.at(4) != 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) == 0) {
             cout<<"Pass Quad 0"<<endl;
+            check_pass = true;
         }else  if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) != 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) == 0) {
             cout<<"Pass Quad 1";
+            check_pass = true;
         }else if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) !=0 && R_obj.sensors.at(7) == 0) {
             cout<<"Pass Quad 2";
+            check_pass = true;
         }else if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) != 0) {
             cout<<"Pass Quad 3";
+            check_pass = true;
         }else{
-            cout<<"Issue at an angle ::"<<angle<<" with x_position and y_position"<<R_obj.x_position<<R_obj.y_position<<endl;
+            cout<<"Issue at an angle ::"<<R_obj.theta<<" with x_position and y_position"<<P_obj.x_position_poi<<P_obj.y_position_poi<<endl;
+            exit(10);
         }
-        rover_position_loc.clear();
+        assert(check_pass==true);
+        i+=7;
+        R_obj.theta+=7;
         R_obj.reset_sensors();
-        angle+=5;
     }
+
 }
 
 //This is main function
@@ -491,7 +502,7 @@ int main(int argc, const char * argv[]) {
     //stationary_rover_test(x_start,y_start);
     //stationary_rover_test_1(x_start, y_start);
     //stationary_poi_test(x_start,y_start);
-    //two_rovers_test(x_start,y_start);
+    two_rovers_test(x_start,y_start);
     
     /*//Create numNN of neural network
     int numNN=100;
