@@ -31,6 +31,9 @@ double resolve(double angle){
     while(angle < 0){
         angle += 360;
     }
+    while (angle == 360) {
+        angle = 0;
+    }
     return angle;
 }
 
@@ -494,47 +497,43 @@ void test_path(double x_start, double y_start){
     //given
     R_obj.x_position=x_start;
     R_obj.y_position=y_start;
-    R_obj.theta=0.0;
+    R_obj.theta=180.0;
+    
+    P_obj.x_position_poi=10.0;
+    P_obj.y_position_poi=10.0;
+    P_obj.value_poi=100;
+    
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
     
     double dx=0.0,dy=1.0;
-    
-    P_obj.x_position_poi=0.0;
-    P_obj.y_position_poi=1.0;
-    
-    R_obj.move_rover(dx, dy, R_obj.theta);
-    cout<<"THis is new x_position::"<<R_obj.x_position<<endl;
-    cout<<"This is new y_position::"<<R_obj.y_position<<endl;
-    cout<<"This is theta::"<<R_obj.theta<<endl;
-    
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+
     dx=1.0;
     dy=1.0;
     
-    R_obj.move_rover(dx, dy, R_obj.theta);
-    cout<<"THis is new x_position::"<<R_obj.x_position<<endl;
-    cout<<"This is new y_position::"<<R_obj.y_position<<endl;
-    cout<<"This is theta::"<<R_obj.theta<<endl;
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
     
-    dx=0.0;
-    dy=1.0;
-    R_obj.move_rover(dx, dy, R_obj.theta);
-    cout<<"THis is new x_position::"<<R_obj.x_position<<endl;
-    cout<<"This is new y_position::"<<R_obj.y_position<<endl;
-    cout<<"This is theta::"<<R_obj.theta<<endl;
+    dx=-1/sqrt(2.0);
+    dy=1/sqrt(2.0);
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    
+    /*dx=0.5;
+    dy=0.5;
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;*/
     
     dx=-1.0;
     dy=1.0;
-    R_obj.move_rover(dx, dy, R_obj.theta);
-    cout<<"THis is new x_position::"<<R_obj.x_position<<endl;
-    cout<<"This is new y_position::"<<R_obj.y_position<<endl;
-    cout<<"This is theta::"<<R_obj.theta<<endl;
-    
-    dx=0.0;
-    dy=1.0;
-    R_obj.move_rover(dx, dy, R_obj.theta);
-    cout<<"THis is new x_position::"<<R_obj.x_position<<endl;
-    cout<<"This is new y_position::"<<R_obj.y_position<<endl;
-    cout<<"This is theta::"<<R_obj.theta<<endl;
-    
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+
+    dx=1/sqrt(2.0);
+    dy=1/sqrt(2.0);
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
 }
 
 void test_all_sensors(){

@@ -47,7 +47,7 @@ public:
     int find_quad(double x, double y);
     double find_phi(double x, double y);
     double find_theta(double x_sensed, double y_sensed);
-    void move_rover(double dx, double dy,double theta);
+    void move_rover(double dx, double dy);
 };
 
 //Function returns: sum of values of POIs divided by their distance
@@ -138,13 +138,16 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     return quadrant;
 }
 
-void Rover::move_rover(double dx, double dy,double theta){
+void Rover::move_rover(double dx, double dy){
     //cout<<"This is inverse tan::"<<(atan2(dx,dy) * (180 / PI))<<endl;
-    x_position =(x_position)+  (dy* sin(theta))+(dx *cos(theta));
-    y_position =(y_position)+ (dy* cos(theta))+(dx *sin(theta));
-    theta = theta +  (atan2(dx,dy) * (180 / PI));
-    resolve(theta);
-    cout<<"This is inverse tan in move_rover function::"<<resolve(theta)<<endl;
+//    cout << endl;
+//    cout << cos(90*(PI/180)) << endl;
+//    cout << cos(PI) << endl;
+    x_position =(x_position)+  (dy* sin(theta*(PI/180)))+(dx *cos(theta*(PI/180)));
+    y_position =(y_position)+ (dy* cos(theta*(PI/180)))-(dx *sin(theta*(PI/180)));
+    theta = theta+ (atan2(dx,dy) * (180 / PI));
+    theta = resolve(theta);
+    //cout<<"This is inverse tan in move_rover function::"<<resolve(theta)<<endl;
 }
 
 
