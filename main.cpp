@@ -22,6 +22,8 @@
 
 #define PI 3.14159265
 
+
+
 using namespace std;
 
 double resolve(double angle){
@@ -490,6 +492,63 @@ void two_rovers_test(double x_start, double y_start){
 
 }
 
+vector<double> row_values;
+vector<vector<double>> assert_check_values;
+
+void fill_assert_check_values(){
+    //First set of x , y thetha values
+    for(int i=0;i<3;i++)
+        row_values.push_back(0);
+    assert_check_values.push_back(row_values);
+    row_values.clear();
+    
+    //second set of x,y,thetha values
+    row_values.push_back(0);
+    row_values.push_back(1);
+    row_values.push_back(0);
+    assert_check_values.push_back(row_values);
+    row_values.clear();
+    
+    //third set of x,y,thetha values
+    row_values.push_back(1);
+    row_values.push_back(2);
+    row_values.push_back(45);
+    assert_check_values.push_back(row_values);
+    row_values.clear();
+    
+    //fourth set of x,y,thetha values
+    row_values.push_back(1);
+    row_values.push_back(3);
+    row_values.push_back(0);
+    assert_check_values.push_back(row_values);
+    row_values.clear();
+    
+    //fifth set of x,y,thetha values
+    row_values.push_back(0);
+    row_values.push_back(4);
+    row_values.push_back(315);
+    assert_check_values.push_back(row_values);
+    row_values.clear();
+    
+    //sixth set of x,y,thetha values
+    row_values.push_back(0);
+    row_values.push_back(5);
+    row_values.push_back(0);
+    assert_check_values.push_back(row_values);
+    row_values.clear();
+    
+}
+
+bool tolerance(double delta_maniplate,double check_value){
+    double delta = 0.0000001;
+    if (((delta+ delta_maniplate)>check_value)|| ((delta- delta_maniplate)<check_value) || (( delta_maniplate)==check_value)) {
+        return true;
+    }else{
+        return false;
+    }
+}
+
+
 void test_path(double x_start, double y_start){
     Rover R_obj;
     POI P_obj;
@@ -497,43 +556,121 @@ void test_path(double x_start, double y_start){
     //given
     R_obj.x_position=x_start;
     R_obj.y_position=y_start;
-    R_obj.theta=180.0;
+    R_obj.theta=0.0;
     
-    P_obj.x_position_poi=10.0;
-    P_obj.y_position_poi=10.0;
+    P_obj.x_position_poi=1.0;
+    P_obj.y_position_poi=1.0;
     P_obj.value_poi=100;
     
+    
+    
+    fill_assert_check_values();
+    
+    int step_number = 0;
+    bool check_assert = false;
+    
     cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (step_number==0) {
+        if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
+            if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
+                if(tolerance(R_obj.theta, assert_check_values.at(step_number).at(2))){
+                    check_assert=true;
+                    step_number++;
+                }
+            }
+        }
+    }
+    assert(check_assert);
+    check_assert=false;
     
     double dx=0.0,dy=1.0;
     R_obj.move_rover(dx, dy);
     cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
-
+    if (step_number==1) {
+        if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
+            if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
+                if(tolerance(R_obj.theta, assert_check_values.at(step_number).at(2))){
+                    check_assert=true;
+                    step_number++;
+                }
+            }
+        }
+    }
+    assert(check_assert);
+    check_assert=false;
+    
+    
     dx=1.0;
     dy=1.0;
-    
     R_obj.move_rover(dx, dy);
     cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (step_number==2) {
+        if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
+            if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
+                if(tolerance(R_obj.theta, assert_check_values.at(step_number).at(2))){
+                    check_assert=true;
+                    step_number++;
+                }
+            }
+        }
+    }
+    assert(check_assert);
+    check_assert=false;
     
     dx=-1/sqrt(2.0);
     dy=1/sqrt(2.0);
     R_obj.move_rover(dx, dy);
+    R_obj.reset_sensors();
     cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
-    
-    /*dx=0.5;
-    dy=0.5;
-    R_obj.move_rover(dx, dy);
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;*/
+    if (step_number==3) {
+        if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
+            if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
+                if(tolerance(R_obj.theta, assert_check_values.at(step_number).at(2))){
+                    check_assert=true;
+                    step_number++;
+                }
+            }
+        }
+    }
+    assert(check_assert);
+    check_assert=false;
     
     dx=-1.0;
     dy=1.0;
     R_obj.move_rover(dx, dy);
+    R_obj.reset_sensors();
     cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
-
+    if (step_number==4) {
+        if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
+            if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
+                if(tolerance(R_obj.theta, assert_check_values.at(step_number).at(2))){
+                    check_assert=true;
+                    step_number++;
+                }
+            }
+        }
+    }
+    assert(check_assert);
+    check_assert=false;
+    
     dx=1/sqrt(2.0);
     dy=1/sqrt(2.0);
     R_obj.move_rover(dx, dy);
+    R_obj.reset_sensors();
     cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (step_number==5) {
+        if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
+            if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
+                if(tolerance(R_obj.theta, assert_check_values.at(step_number).at(2))){
+                    check_assert=true;
+                    step_number++;
+                }
+            }
+        }
+    }
+    assert(check_assert);
+    check_assert=false;
+
 }
 
 void test_all_sensors(){
@@ -621,7 +758,6 @@ int main(int argc, const char * argv[]) {
         movement_rover(individualRover.phi,individualRover.theta);
         individualRover.sensors.clear();
         individualRover.get_all_sensorvalues(individualPOI.x_position_poi, individualPOI.y_position_poi, x_position_otherRover, y_position_otherRover,individualRover.phi);
-        
     }*/
     
     return 0;
