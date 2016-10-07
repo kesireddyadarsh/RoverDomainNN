@@ -139,8 +139,8 @@ int Rover::find_quad(double x_sensed, double y_sensed){
 }
 
 void Rover::move_rover(double dx, double dy){
-    x_position =(x_position)+  (dy* sin(theta*(PI/180)))+(dx *cos(theta*(PI/180)));
-    y_position =(y_position)+ (dy* cos(theta*(PI/180)))-(dx *sin(theta*(PI/180)));
+    x_position =(x_position)+  (dy* cos(theta*(PI/180)))-(dx *sin(theta*(PI/180)));
+    y_position =(y_position)+ (dy* sin(theta*(PI/180)))+(dx *cos(theta*(PI/180)));
     theta = theta+ (atan2(dx,dy) * (180 / PI));
     theta = resolve(theta);
 }

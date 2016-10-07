@@ -39,10 +39,6 @@ double resolve(double angle){
     return angle;
 }
 
-void movement_rover(double phi,double theta){
-    double angle = phi-theta;
-}
-
 bool full_sensor_test(){
     bool passfail = false;
     
@@ -331,7 +327,7 @@ void stationary_rover_test(double x_start,double y_start){//Pass x_position,y_po
     }
 }
 
-void find_x_y(double angle, double radius, double x_position, double y_position){
+void find_x_y_stationary_rover_test_1(double angle, double radius, double x_position, double y_position){
     poi_positions_loc.push_back(x_position+(radius*cos(angle * (PI /180))));
     poi_positions_loc.push_back(y_position+(radius*sin(angle * (PI /180))));
 }
@@ -354,7 +350,7 @@ void stationary_rover_test_1(double x_start,double y_start){
     P_obj.value_poi=100;
     
     while (angle<360) {
-        find_x_y(angle, radius, R_obj.x_position, R_obj.y_position);
+        find_x_y_stationary_rover_test_1(angle, radius, R_obj.x_position, R_obj.y_position);
         P_obj.x_position_poi = poi_positions_loc.at(0);
         P_obj.y_position_poi = poi_positions_loc.at(1);
         R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
@@ -673,6 +669,104 @@ void test_path(double x_start, double y_start){
 
 }
 
+vector<vector<double>> point_x_y_circle;
+vector<double> temp;
+
+void find_x_y_test_circle_path(double start_x_position,double start_y_position,double angle){
+    double radius = 1.0;
+    temp.push_back(start_x_position+(radius*cos(angle * (PI /180))));
+    temp.push_back(start_y_position+(radius*sin(angle * (PI/180))));
+}
+
+void test_circle_path(double x_start,double y_start){
+    Rover R_obj;
+    POI P_obj;
+    
+    R_obj.x_position=x_start;
+    R_obj.y_position=y_start;
+    R_obj.theta=0.0;
+    
+    P_obj.x_position_poi=0.0;
+    P_obj.y_position_poi=0.0;
+    P_obj.value_poi=100.0;
+    
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    
+    double dx=0.0,dy=1.0;
+    double angle=0.0;
+    
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    
+    angle=30.0;
+    for(;angle<=360;){
+        cout<<"This is angle::"<<angle<<endl;
+        R_obj.x_position=x_start;
+        R_obj.y_position=y_start;
+        R_obj.theta=0.0;
+        find_x_y_test_circle_path(x_start, y_start,angle);
+        dx=temp.at(0);
+        dy=temp.at(1);
+        cout<<dx<<"\t"<<dy<<"\t"<<angle<<endl;
+        R_obj.move_rover(dx, dy);
+        cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+        cout<<R_obj.theta<<endl;
+        temp.clear();
+        angle+=15.0;
+    }
+    
+    /*R_obj.x_position=x_start;
+    R_obj.y_position=y_start;
+    R_obj.theta=0.0;
+    angle=45.0;
+    find_x_y_test_circle_path(x_start, y_start,angle);
+    dx=temp.at(0);
+    dy=temp.at(1);
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    temp.clear();
+    
+    R_obj.x_position=x_start;
+    R_obj.y_position=y_start;
+    R_obj.theta=0.0;
+    angle=60.0;
+    find_x_y_test_circle_path(x_start, y_start,angle);
+    dx=temp.at(0);
+    dy=temp.at(1);
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    temp.clear();
+    
+    R_obj.x_position=x_start;
+    R_obj.y_position=y_start;
+    R_obj.theta=0.0;
+    angle=180.0;
+    find_x_y_test_circle_path(x_start, y_start,angle);
+    dx=temp.at(0);
+    dy=temp.at(1);
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    temp.clear();
+    
+    R_obj.x_position=x_start;
+    R_obj.y_position=y_start;
+    R_obj.theta=0.0;
+    angle=.0;
+    find_x_y_test_circle_path(x_start, y_start,angle);
+    dx=temp.at(0);
+    dy=temp.at(1);
+    R_obj.move_rover(dx, dy);
+    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    temp.clear();*/
+    
+//    find_x_y_test_circle_path(x_start,y_start);
+//    
+//    cout<<"This is first value x::"<<point_x_y_circle.at(0).at(0)<<endl;
+//    cout<<"This is first value y::"<<point_x_y_circle.at(0).at(1)<<endl;
+    
+    
+}
+
 void test_all_sensors(){
     //POI_sensor_test();
     //rover_sensor_test();
@@ -683,7 +777,8 @@ void test_all_sensors(){
     //stationary_poi_test(x_start,y_start);
     //two_rovers_test(x_start,y_start);
     double x_start = 0.0, y_start = 0.0;
-    test_path(x_start,y_start);
+    //test_path(x_start,y_start);
+    test_circle_path(x_start,y_start);
 }
 
 //This is main function
@@ -692,10 +787,10 @@ int main(int argc, const char * argv[]) {
     //Try to move Neural network in to header
     srand((unsigned)time(NULL));
     test_all_sensors();
-    cout<<"Done!!!"<<endl;
+//    cout<<"Done!!!"<<endl;
     
-    /*//Create numNN of neural network
-    int numNN=100;
+    //Create numNN of neural network
+    /*int numNN=100;
     //int numCases = 4;
     vector<unsigned> topology;
     topology.clear();
@@ -727,8 +822,8 @@ int main(int argc, const char * argv[]) {
     
     //run the rover sensors all 8
     //Inital x y and theta values of rover
-    individualRover.x_position=0.0; //x_position of rover
-    individualRover.y_position=0.0; //y_position of rover
+    individualRover.x_position=10.0; //x_position of rover
+    individualRover.y_position=10.0; //y_position of rover
     individualRover.theta = 0.0 ; //radians
     
     //X and Y distance between POI and Rover
@@ -736,28 +831,34 @@ int main(int argc, const char * argv[]) {
     double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
     cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
     cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
-    individualRover.phi = Robj.find_phi(distance_in_x_phi,distance_in_y_phi);
+    //individualRover.phi = Robj.find_phi(distance_in_x_phi,distance_in_y_phi);
     cout<<"this is phi value in main::::"<<individualRover.phi<<endl;
     
-    
-    
-    /*for (int i=0; i<100; i++) {
+    for (int i=0; i<100; i++) {
+        individualRover.reset_sensors();
+        individualRover.sense_poi(individualPOI.x_position_poi, individualPOI.y_position_poi, individualPOI.value_poi);
         mypop.runNetwork(individualRover.sensors);
         double dx = mypop.popVector.at(0).outputvaluesNN.at(0);
         double dy = mypop.popVector.at(0).outputvaluesNN.at(1);
-        individualRover.theta = calculate_theta(dx,dy,individualRover.theta);
-        double delta_x = (dy *sin(individualRover.theta))+(dx *sin(individualRover.theta));
-        double delta_y = (dy *cos(individualRover.theta))+(dx *cos(individualRover.theta));
-        individualRover.x_position += delta_x;
-        individualRover.y_position += delta_y;
-        double distance_in_x_phi= individualPOI.x_position_poi-individualRover.x_position;
-        double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
-        cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
-        cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
-        individualRover.phi = determineQuadrant(distance_in_x_phi,distance_in_y_phi);
-        movement_rover(individualRover.phi,individualRover.theta);
-        individualRover.sensors.clear();
-        individualRover.get_all_sensorvalues(individualPOI.x_position_poi, individualPOI.y_position_poi, x_position_otherRover, y_position_otherRover,individualRover.phi);
+        mypop.popVector.at(0).outputvaluesNN.clear();
+        cout<<"This are dx: "<<dx<<endl;
+        cout<<"This are dy: "<<dy<<endl;
+        //individualRover.theta = calculate_theta(dx,dy,individualRover.theta);
+        individualRover.theta = individualRover.find_theta(dx, dy);
+        individualRover.move_rover(dx,dy);
+//        double delta_x = (dy *sin(individualRover.theta))+(dx *sin(individualRover.theta));
+//        double delta_y = (dy *cos(individualRover.theta))+(dx *cos(individualRover.theta));
+//        individualRover.x_position += delta_x;
+//        individualRover.y_position += delta_y;
+//        double distance_in_x_phi= individualPOI.x_position_poi-individualRover.x_position;
+//        double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
+//        cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
+//        cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
+//        //individualRover.phi = determineQuadrant(distance_in_x_phi,distance_in_y_phi);
+        cout<<"This is new x position::"<<individualRover.x_position<<endl;
+        cout<<"This is new y position::"<<individualRover.y_position<<endl;
+        individualRover.move_rover(individualRover.phi,individualRover.theta);
+        //individualRover.sensors.clear();
     }*/
     
     return 0;
