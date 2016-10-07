@@ -27,7 +27,7 @@
 using namespace std;
 
 double resolve(double angle){
-    while(angle > 360){
+    while(angle >= 360){
         angle -=360;
     }
     while(angle < 0){
@@ -707,63 +707,15 @@ void test_circle_path(double x_start,double y_start){
         find_x_y_test_circle_path(x_start, y_start,angle);
         dx=temp.at(0);
         dy=temp.at(1);
-        cout<<dx<<"\t"<<dy<<"\t"<<angle<<endl;
+        cout<<"Position on circle"<<endl;
+        cout<<"x:: "<<dx<<"\ty::"<<dy<<"\ta::"<<angle<<endl;
         R_obj.move_rover(dx, dy);
-        cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+        cout<<"Rover movement value"<<endl;
+        cout<<"x:: "<<R_obj.x_position<<"\t y::"<<R_obj.y_position<<"\t th::"<<R_obj.theta<<endl;
         cout<<R_obj.theta<<endl;
         temp.clear();
         angle+=15.0;
     }
-    
-    /*R_obj.x_position=x_start;
-    R_obj.y_position=y_start;
-    R_obj.theta=0.0;
-    angle=45.0;
-    find_x_y_test_circle_path(x_start, y_start,angle);
-    dx=temp.at(0);
-    dy=temp.at(1);
-    R_obj.move_rover(dx, dy);
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
-    temp.clear();
-    
-    R_obj.x_position=x_start;
-    R_obj.y_position=y_start;
-    R_obj.theta=0.0;
-    angle=60.0;
-    find_x_y_test_circle_path(x_start, y_start,angle);
-    dx=temp.at(0);
-    dy=temp.at(1);
-    R_obj.move_rover(dx, dy);
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
-    temp.clear();
-    
-    R_obj.x_position=x_start;
-    R_obj.y_position=y_start;
-    R_obj.theta=0.0;
-    angle=180.0;
-    find_x_y_test_circle_path(x_start, y_start,angle);
-    dx=temp.at(0);
-    dy=temp.at(1);
-    R_obj.move_rover(dx, dy);
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
-    temp.clear();
-    
-    R_obj.x_position=x_start;
-    R_obj.y_position=y_start;
-    R_obj.theta=0.0;
-    angle=.0;
-    find_x_y_test_circle_path(x_start, y_start,angle);
-    dx=temp.at(0);
-    dy=temp.at(1);
-    R_obj.move_rover(dx, dy);
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
-    temp.clear();*/
-    
-//    find_x_y_test_circle_path(x_start,y_start);
-//    
-//    cout<<"This is first value x::"<<point_x_y_circle.at(0).at(0)<<endl;
-//    cout<<"This is first value y::"<<point_x_y_circle.at(0).at(1)<<endl;
-    
     
 }
 
@@ -777,7 +729,7 @@ void test_all_sensors(){
     //stationary_poi_test(x_start,y_start);
     //two_rovers_test(x_start,y_start);
     double x_start = 0.0, y_start = 0.0;
-    //test_path(x_start,y_start);
+//    test_path(x_start,y_start);
     test_circle_path(x_start,y_start);
 }
 
