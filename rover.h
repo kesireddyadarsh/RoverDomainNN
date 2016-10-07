@@ -141,14 +141,9 @@ int Rover::find_quad(double x_sensed, double y_sensed){
 void Rover::move_rover(double dx, double dy){
     
     double aom = atan2(dy,dx)*180/PI; /// angle of movement
-//    cout << "AOM: " << aom << endl;
-//    
-//    cout << "Dx: " << dx << endl;
-//    cout << "Dy: " << dy << endl;
-    
     double rad2deg = PI/180;
-    x_position = x_position + sin(theta*rad2deg) * dy + cos((theta)*rad2deg) * dx;
-    y_position = y_position + sin((theta)*rad2deg) * dx + cos(theta*rad2deg) * dy;
+    x_position = x_position + sin(theta*rad2deg) * dy + cos(theta*rad2deg) * dx;
+    y_position = y_position + sin(theta*rad2deg) * dx + cos(theta*rad2deg) * dy;
     theta = theta + aom;
     theta = resolve(theta);
     

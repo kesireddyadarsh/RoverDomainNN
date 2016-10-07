@@ -682,10 +682,6 @@ void test_circle_path(double x_start,double y_start){
     Rover R_obj;
     POI P_obj;
     
-    R_obj.x_position=x_start;
-    R_obj.y_position=y_start;
-    R_obj.theta=0.0;
-    
     P_obj.x_position_poi=0.0;
     P_obj.y_position_poi=0.0;
     P_obj.value_poi=100.0;
@@ -695,24 +691,24 @@ void test_circle_path(double x_start,double y_start){
     double dx=0.0,dy=1.0;
     double angle=0.0;
     
-    R_obj.move_rover(dx, dy);
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
-    
-    angle=30.0;
+//    angle=30.0;
     for(;angle<=360;){
-        cout<<"This is angle::"<<angle<<endl;
+//        cout<<"This is angle::"<<angle<<endl;
         R_obj.x_position=x_start;
         R_obj.y_position=y_start;
         R_obj.theta=0.0;
         find_x_y_test_circle_path(x_start, y_start,angle);
         dx=temp.at(0);
         dy=temp.at(1);
-        cout<<"Position on circle"<<endl;
-        cout<<"x:: "<<dx<<"\ty::"<<dy<<"\ta::"<<angle<<endl;
+//        cout<<"Position on circle"<<endl;
+//        cout<<"x:: "<<dx<<"\ty::"<<dy<<"\ta::"<<angle<<endl;
         R_obj.move_rover(dx, dy);
-        cout<<"Rover movement value"<<endl;
-        cout<<"x:: "<<R_obj.x_position<<"\t y::"<<R_obj.y_position<<"\t th::"<<R_obj.theta<<endl;
-        cout<<R_obj.theta<<endl;
+//        cout<<"Rover movement value"<<endl;
+//        cout<<"x:: "<<R_obj.x_position<<"\t y::"<<R_obj.y_position<<"\t th::"<<R_obj.theta<<endl;
+//        cout<<R_obj.theta<<endl;
+        assert(tolerance(R_obj.x_position, dx));
+        assert(tolerance(R_obj.y_position, dy));
+        assert(tolerance(R_obj.theta, angle));
         temp.clear();
         angle+=15.0;
     }
