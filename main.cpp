@@ -23,7 +23,7 @@
 #define PI 3.14159265
 
 bool test_rover = true;
-bool runNeuralNetwork = true;
+bool runNeuralNetwork = false;
 
 
 using namespace std;
@@ -59,7 +59,7 @@ bool full_sensor_test(){
 
 // Tests Stationary POI and Stationary Rover in all directions
 bool POI_sensor_test(){
-    bool VERBOSE = true;
+    bool VERBOSE = false;
     
     bool passfail = false;
     
@@ -341,6 +341,7 @@ void find_x_y_stationary_rover_test_1(double angle, double radius, double x_posi
 }
 
 void stationary_rover_test_1(double x_start,double y_start){
+    bool VERBOSE = false;
     Rover R_obj; //Rover object
     POI P_obj;
     
@@ -363,16 +364,25 @@ void stationary_rover_test_1(double x_start,double y_start){
         P_obj.y_position_poi = poi_positions_loc.at(1);
         R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
         if (R_obj.sensors.at(0) != 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) == 0) {
-            cout<<"Pass Quad 0"<<endl;
+            if (VERBOSE) {
+                cout<<"Pass Quad 0"<<endl;
+            }
             check_pass = true;
         }else  if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) != 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) == 0) {
-                cout<<"Pass Quad 1";
+            if (VERBOSE) {
+                cout<<"Pass Quad 1"<<endl;
+
+            }
                 check_pass = true;
             }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) !=0 && R_obj.sensors.at(3) == 0) {
-                cout<<"Pass Quad 2";
+                if (VERBOSE) {
+                    cout<<"Pass Quad 2"<<endl;
+                }
                 check_pass = true;
             }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) != 0) {
-                cout<<"Pass Quad 3";
+                if (VERBOSE) {
+                    cout<<"Pass Quad 3"<<endl;
+                }
                 check_pass = true;
             }else{
                 cout<<"Issue at an angle ::"<<angle<<" with x_position and y_position"<<R_obj.x_position<<R_obj.y_position<<endl;
@@ -387,6 +397,7 @@ void stationary_rover_test_1(double x_start,double y_start){
 }
 
 void stationary_poi_test(double x_start,double y_start){
+    bool VERBOSE = false;
     Rover R_obj; //Rover object
     POI P_obj; // POI object
     vector<double> rover_position_loc;
@@ -408,22 +419,32 @@ void stationary_poi_test(double x_start,double y_start){
             break;
         }
         R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
-        cout<<endl;
-        for (int j=0; j<R_obj.sensors.size(); j++) {
-            cout<<R_obj.sensors.at(j)<<"\t";
+        if (VERBOSE) {
+            cout<<endl;
+            for (int j=0; j<R_obj.sensors.size(); j++) {
+                cout<<R_obj.sensors.at(j)<<"\t";
+            }
+            cout<<endl;
         }
-        cout<<endl;
         if (R_obj.sensors.at(0) != 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) == 0) {
-            cout<<"Pass Quad 0"<<endl;
+            if (VERBOSE) {
+                cout<<"Pass Quad 0"<<endl;
+            }
             check_pass = true;
         }else  if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) != 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) == 0) {
-            cout<<"Pass Quad 1";
+            if (VERBOSE) {
+                cout<<"Pass Quad 1";
+            }
             check_pass = true;
         }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) !=0 && R_obj.sensors.at(3) == 0) {
-            cout<<"Pass Quad 2";
+            if (VERBOSE) {
+                cout<<"Pass Quad 2";
+            }
             check_pass = true;
         }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) != 0) {
-            cout<<"Pass Quad 3";
+            if (VERBOSE) {
+                cout<<"Pass Quad 3";
+            }
             check_pass = true;
         }else{
             cout<<"Issue at an angle ::"<<R_obj.theta<<" with x_position and y_position"<<P_obj.x_position_poi<<P_obj.y_position_poi<<endl;
@@ -437,6 +458,7 @@ void stationary_poi_test(double x_start,double y_start){
 }
 
 void two_rovers_test(double x_start, double y_start){
+    bool VERBOSE = false;
     Rover R_obj; //Rover object
     POI P_obj; // POI object
     vector<double> rover_position_loc;
@@ -458,30 +480,40 @@ void two_rovers_test(double x_start, double y_start){
             break;
         }
         R_obj.sense_rover(otherRover_x, otherRover_y);
-        cout<<endl;
-        for (int j=0; j<R_obj.sensors.size(); j++) {
-            cout<<R_obj.sensors.at(j)<<"\t";
+        if (VERBOSE) {
+            cout<<endl;
+            for (int j=0; j<R_obj.sensors.size(); j++) {
+                cout<<R_obj.sensors.at(j)<<"\t";
+            }
+            cout<<endl;
         }
-        cout<<endl;
         if (R_obj.sensors.at(4) != 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) == 0) {
             if ((0<=R_obj.theta && 45>= R_obj.theta)||(315<R_obj.theta && 360>= R_obj.theta)) {
-                cout<<"Pass Quad 0"<<endl;
+                if (VERBOSE) {
+                    cout<<"Pass Quad 0"<<endl;
+                }
                 check_pass = true;
             }
             
         }else  if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) != 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) == 0) {
             if((45<R_obj.theta && 135>= R_obj.theta)){
-                cout<<"Pass Quad 1";
+                if (VERBOSE) {
+                    cout<<"Pass Quad 1";
+                }
                 check_pass = true;
             }
         }else if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) !=0 && R_obj.sensors.at(7) == 0) {
             if((135<R_obj.theta && 225>= R_obj.theta)){
-                cout<<"Pass Quad 2";
+                if (VERBOSE) {
+                    cout<<"Pass Quad 2";
+                }
                 check_pass = true;
             }
         }else if (R_obj.sensors.at(4) == 0 && R_obj.sensors.at(5) == 0 && R_obj.sensors.at(6) ==0 && R_obj.sensors.at(7) != 0) {
             if((225<R_obj.theta && 315>= R_obj.theta)){
-                cout<<"Pass Quad 3";
+                if (VERBOSE) {
+                    cout<<"Pass Quad 3";
+                }
                 check_pass = true;
             }
         }else{
@@ -554,6 +586,7 @@ bool tolerance(double delta_maniplate,double check_value){
 
 
 void test_path(double x_start, double y_start){
+    bool VERBOSE = false;
     Rover R_obj;
     POI P_obj;
     
@@ -573,7 +606,9 @@ void test_path(double x_start, double y_start){
     int step_number = 0;
     bool check_assert = false;
     
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (VERBOSE) {
+        cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    }
     if (step_number==0) {
         if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
             if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
@@ -589,7 +624,9 @@ void test_path(double x_start, double y_start){
     
     double dx=0.0,dy=1.0;
     R_obj.move_rover(dx, dy);
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (VERBOSE) {
+        cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    }
     if (step_number==1) {
         if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
             if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
@@ -607,7 +644,9 @@ void test_path(double x_start, double y_start){
     dx=1.0;
     dy=1.0;
     R_obj.move_rover(dx, dy);
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (VERBOSE) {
+        cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    }
     if (step_number==2) {
         if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
             if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
@@ -625,7 +664,9 @@ void test_path(double x_start, double y_start){
     dy=1/sqrt(2.0);
     R_obj.move_rover(dx, dy);
     R_obj.reset_sensors();
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (VERBOSE) {
+        cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    }
     if (step_number==3) {
         if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
             if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
@@ -643,7 +684,9 @@ void test_path(double x_start, double y_start){
     dy=1.0;
     R_obj.move_rover(dx, dy);
     R_obj.reset_sensors();
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (VERBOSE) {
+        cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    }
     if (step_number==4) {
         if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
             if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
@@ -661,7 +704,9 @@ void test_path(double x_start, double y_start){
     dy=1/sqrt(2.0);
     R_obj.move_rover(dx, dy);
     R_obj.reset_sensors();
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (VERBOSE) {
+        cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    }
     if (step_number==5) {
         if(tolerance(R_obj.x_position, assert_check_values.at(step_number).at(0))){
             if(tolerance(R_obj.y_position, assert_check_values.at(step_number).at(1))){
@@ -687,6 +732,7 @@ void find_x_y_test_circle_path(double start_x_position,double start_y_position,d
 }
 
 void test_circle_path(double x_start,double y_start){
+    bool VERBOSE = false;
     Rover R_obj;
     POI P_obj;
     
@@ -694,7 +740,9 @@ void test_circle_path(double x_start,double y_start){
     P_obj.y_position_poi=0.0;
     P_obj.value_poi=100.0;
     
-    cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    if (VERBOSE) {
+        cout<<R_obj.x_position<<"\t"<<R_obj.y_position<<"\t"<<R_obj.theta<<endl;
+    }
     
     double dx=0.0,dy=1.0;
     double angle=0.0;
@@ -718,32 +766,34 @@ void test_circle_path(double x_start,double y_start){
 
 void test_all_sensors(){
     
-//    POI_sensor_test();
-//    rover_sensor_test();
-//    custom_test();
-//    double x_start = 0.0, y_start = 0.0;
-//    stationary_rover_test(x_start,y_start);
-//    stationary_rover_test_1(x_start, y_start);
-//    stationary_poi_test(x_start,y_start);
-//    two_rovers_test(x_start,y_start);
-//    test_path(x_start,y_start);
-//    
-//    
-//    x_start = 0.0, y_start = 0.0;
-//    test_circle_path(x_start,y_start);
-    cout<<"Whats going on!!"<<endl;
+    POI_sensor_test();
+    rover_sensor_test();
+    custom_test();
+    double x_start = 0.0, y_start = 0.0;
+    stationary_rover_test(x_start,y_start);
+    stationary_rover_test_1(x_start, y_start);
+    stationary_poi_test(x_start,y_start);
+    two_rovers_test(x_start,y_start);
+    test_path(x_start,y_start);
+    x_start = 0.0, y_start = 0.0;
+    test_circle_path(x_start,y_start);
+
 }
 
 
 
 //This is main function
 int main(int argc, const char * argv[]) {
+    bool print_all = false;
+    bool VERBOSE = true;
     srand((unsigned)time(NULL));
     
     
     if (test_rover == true) {
-//         test_all_sensors();
-        cout<<"\n\n\nThis is end"<<endl;
+         test_all_sensors();
+        if (print_all) {
+            cout<<"\n\n\n$$$This is end of test all sensors function$$$\n\n"<<endl;
+        }
     }
    
 
