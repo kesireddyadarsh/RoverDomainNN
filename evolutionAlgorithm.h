@@ -30,7 +30,7 @@ class Population{
 public:
     Population(int numNN,vector<unsigned> topology);
     vector<Net> popVector;
-    void runNetwork(vector<double> inputVal);
+    void runNetwork(vector<double> inputVal,int number_neural);
     void sortError();
     void mutation(int numNN);
     void newerrorvector();
@@ -77,9 +77,9 @@ void Population::repop(int numNN){
     }
 }
 
-void Population::runNetwork(vector<double> inputVals){
-    popVector.at(0).feedForward(inputVals);
-    popVector.at(0).backProp();
+void Population::runNetwork(vector<double> inputVals,int num_neural){
+    popVector.at(num_neural).feedForward(inputVals);
+    popVector.at(num_neural).backProp();
 }
 
 

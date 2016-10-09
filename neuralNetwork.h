@@ -181,7 +181,7 @@ void Net::feedForward(vector<double> inputVals){
     z_error_temp = 0.0;
     
     for (unsigned n = 0; n < outputLayer.size() - 1; ++n) {
-        cout<<"This is value from outputlayer.getourputvalue:::::"<<outputLayer[n].getOutputVal()<<endl;
+        //cout<<"This is value from outputlayer.getourputvalue:::::"<<outputLayer[n].getOutputVal()<<endl;
         //double delta = temp_targets[n] - outputLayer[n].getOutputVal();
         //cout<<"This is delta value::"<<delta;
         //z_error_temp += delta * delta;
@@ -193,10 +193,10 @@ void Net::feedForward(vector<double> inputVals){
 double Net::backProp(){
     z_error = 0.0;
     for (int temp = 0; temp< z_error_vector.size(); temp++) {
-        cout<<"This is z_error_vector"<<temp<<" value::"<< z_error_vector[temp]<<endl;
+        //cout<<"This is z_error_vector"<<temp<<" value::"<< z_error_vector[temp]<<endl;
         z_error += z_error_vector[temp];
     }
-    cout<<"This is z_error::"<<z_error<<endl;
+//    cout<<"This is z_error::"<<z_error<<endl;
     return z_error;
 }
 

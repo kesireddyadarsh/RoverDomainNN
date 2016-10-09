@@ -22,10 +22,13 @@
 
 #define PI 3.14159265
 
+bool test_rover = true;
+bool runNeuralNetwork = true;
 
 
 using namespace std;
 
+// Will resolve angle between 0 to 360
 double resolve(double angle){
     while(angle >= 360){
         angle -=360;
@@ -39,6 +42,7 @@ double resolve(double angle){
     return angle;
 }
 
+// Contains boolean values returns pass or fail
 bool full_sensor_test(){
     bool passfail = false;
     
@@ -52,6 +56,8 @@ bool full_sensor_test(){
     return passfail;
 }
 
+
+// Tests Stationary POI and Stationary Rover in all directions
 bool POI_sensor_test(){
     bool VERBOSE = true;
     
@@ -168,6 +174,8 @@ bool POI_sensor_test(){
     return passfail;
 }
 
+
+//Test for stationary rovers test in all directions
 bool rover_sensor_test(){
     bool passfail = false;
     
@@ -691,21 +699,14 @@ void test_circle_path(double x_start,double y_start){
     double dx=0.0,dy=1.0;
     double angle=0.0;
     
-//    angle=30.0;
     for(;angle<=360;){
-//        cout<<"This is angle::"<<angle<<endl;
         R_obj.x_position=x_start;
         R_obj.y_position=y_start;
         R_obj.theta=0.0;
         find_x_y_test_circle_path(x_start, y_start,angle);
         dx=temp.at(0);
         dy=temp.at(1);
-//        cout<<"Position on circle"<<endl;
-//        cout<<"x:: "<<dx<<"\ty::"<<dy<<"\ta::"<<angle<<endl;
         R_obj.move_rover(dx, dy);
-//        cout<<"Rover movement value"<<endl;
-//        cout<<"x:: "<<R_obj.x_position<<"\t y::"<<R_obj.y_position<<"\t th::"<<R_obj.theta<<endl;
-//        cout<<R_obj.theta<<endl;
         assert(tolerance(R_obj.x_position, dx));
         assert(tolerance(R_obj.y_position, dy));
         assert(tolerance(R_obj.theta, angle));
@@ -716,98 +717,116 @@ void test_circle_path(double x_start,double y_start){
 }
 
 void test_all_sensors(){
-    //POI_sensor_test();
-    //rover_sensor_test();
-    //custom_test();
-    //double x_start = 2.0, y_start = 1.0;
-    //stationary_rover_test(x_start,y_start);
-    //stationary_rover_test_1(x_start, y_start);
-    //stationary_poi_test(x_start,y_start);
-    //two_rovers_test(x_start,y_start);
-    double x_start = 0.0, y_start = 0.0;
+    
+//    POI_sensor_test();
+//    rover_sensor_test();
+//    custom_test();
+//    double x_start = 0.0, y_start = 0.0;
+//    stationary_rover_test(x_start,y_start);
+//    stationary_rover_test_1(x_start, y_start);
+//    stationary_poi_test(x_start,y_start);
+//    two_rovers_test(x_start,y_start);
 //    test_path(x_start,y_start);
-    test_circle_path(x_start,y_start);
+//    
+//    
+//    x_start = 0.0, y_start = 0.0;
+//    test_circle_path(x_start,y_start);
+    cout<<"Whats going on!!"<<endl;
 }
+
+
 
 //This is main function
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    //Try to move Neural network in to header
     srand((unsigned)time(NULL));
-    test_all_sensors();
-//    cout<<"Done!!!"<<endl;
-    
-    //Create numNN of neural network
-    /*int numNN=100;
-    //int numCases = 4;
-    vector<unsigned> topology;
-    topology.clear();
-    topology.push_back(8);
-    topology.push_back(10);
-    topology.push_back(2);
-    Population mypop(numNN,topology);
-    
-    //Create values for Rover;
-    int x_position_otherRover=NULL;
-    int y_position_otherRover=NULL;
-    
-    Environment world;
-    //Set values of poi's
-    POI individualPOI;
-    individualPOI.x_position_poi=30.0;
-    individualPOI.y_position_poi=50.0;
-    individualPOI.value_poi=100;
     
     
-    //vectors of rovers
-    vector<Rover> teamRover;
-    
-    //Rover object
-    Rover Robj;
-    
-    //import weight into rovers
-    Rover individualRover;
-    
-    //run the rover sensors all 8
-    //Inital x y and theta values of rover
-    individualRover.x_position=10.0; //x_position of rover
-    individualRover.y_position=10.0; //y_position of rover
-    individualRover.theta = 0.0 ; //radians
-    
-    //X and Y distance between POI and Rover
-    double distance_in_x_phi= individualPOI.x_position_poi-individualRover.x_position;
-    double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
-    cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
-    cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
-    //individualRover.phi = Robj.find_phi(distance_in_x_phi,distance_in_y_phi);
-    cout<<"this is phi value in main::::"<<individualRover.phi<<endl;
-    
-    for (int i=0; i<100; i++) {
-        individualRover.reset_sensors();
-        individualRover.sense_poi(individualPOI.x_position_poi, individualPOI.y_position_poi, individualPOI.value_poi);
-        mypop.runNetwork(individualRover.sensors);
-        double dx = mypop.popVector.at(0).outputvaluesNN.at(0);
-        double dy = mypop.popVector.at(0).outputvaluesNN.at(1);
-        mypop.popVector.at(0).outputvaluesNN.clear();
-        cout<<"This are dx: "<<dx<<endl;
-        cout<<"This are dy: "<<dy<<endl;
-        //individualRover.theta = calculate_theta(dx,dy,individualRover.theta);
-        individualRover.theta = individualRover.find_theta(dx, dy);
-        individualRover.move_rover(dx,dy);
-//        double delta_x = (dy *sin(individualRover.theta))+(dx *sin(individualRover.theta));
-//        double delta_y = (dy *cos(individualRover.theta))+(dx *cos(individualRover.theta));
-//        individualRover.x_position += delta_x;
-//        individualRover.y_position += delta_y;
-//        double distance_in_x_phi= individualPOI.x_position_poi-individualRover.x_position;
-//        double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
-//        cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
-//        cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
-//        //individualRover.phi = determineQuadrant(distance_in_x_phi,distance_in_y_phi);
-        cout<<"This is new x position::"<<individualRover.x_position<<endl;
-        cout<<"This is new y position::"<<individualRover.y_position<<endl;
-        individualRover.move_rover(individualRover.phi,individualRover.theta);
-        //individualRover.sensors.clear();
-    }*/
+    if (test_rover == true) {
+//         test_all_sensors();
+        cout<<"\n\n\nThis is end"<<endl;
+    }
+   
+
+    if (runNeuralNetwork == true) {
+        cout<<"\n\n Neural network"<<endl;
+        //Create numNN of neural network
+        int numNN=100;
+        //int numCases = 4;
+        vector<unsigned> topology;
+        topology.clear();
+        topology.push_back(8);
+        topology.push_back(10);
+        topology.push_back(2);
+        Population mypop(numNN,topology);
+        
+        //Create values for Rover;
+        int x_position_otherRover=NULL;
+        int y_position_otherRover=NULL;
+        
+        Environment world;
+        //Set values of poi's
+        POI individualPOI;
+        individualPOI.x_position_poi=30.0;
+        individualPOI.y_position_poi=50.0;
+        individualPOI.value_poi=100;
+        
+        
+        //vectors of rovers
+        vector<Rover> teamRover;
+        
+        //Rover object
+        Rover Robj;
+        
+        //import weight into rovers
+        Rover individualRover;
+        
+        
+        for (int j=0; j<numNN; j++) {
+            
+            //run the rover sensors all 8
+            //Inital x y and theta values of rover
+            individualRover.x_position=10.0; //x_position of rover
+            individualRover.y_position=10.0; //y_position of rover
+            individualRover.theta = 0.0 ; //radians
+            
+            //X and Y distance between POI and Rover
+            //double distance_in_x_phi= individualPOI.x_position_poi-individualRover.x_position;
+            //double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
+            //    cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
+            //    cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
+            //individualRover.phi = Robj.find_phi(distance_in_x_phi,distance_in_y_phi);
+            //    cout<<"this is phi value in main::::"<<individualRover.phi<<endl;
+            
+            for (int i=0; i<100; i++) {
+                individualRover.reset_sensors();
+                individualRover.sense_poi(individualPOI.x_position_poi, individualPOI.y_position_poi, individualPOI.value_poi);
+                mypop.runNetwork(individualRover.sensors,j);
+                double dx = mypop.popVector.at(j).outputvaluesNN.at(0);
+                double dy = mypop.popVector.at(j).outputvaluesNN.at(1);
+                mypop.popVector.at(0).outputvaluesNN.clear();
+                //        cout<<"This are dx: "<<dx<<endl;
+                //        cout<<"This are dy: "<<dy<<endl;
+                //        //individualRover.theta = calculate_theta(dx,dy,individualRover.theta);
+                individualRover.move_rover(dx,dy);
+                individualRover.theta = individualRover.find_theta(dx, dy);
+                
+                //        double delta_x = (dy *sin(individualRover.theta))+(dx *sin(individualRover.theta));
+                //        double delta_y = (dy *cos(individualRover.theta))+(dx *cos(individualRover.theta));
+                //        individualRover.x_position += delta_x;
+                //        individualRover.y_position += delta_y;
+                //        double distance_in_x_phi= individualPOI.x_position_poi-individualRover.x_position;
+                //        double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
+                //        cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
+                //        cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
+                //        //individualRover.phi = determineQuadrant(distance_in_x_phi,distance_in_y_phi);
+                //        cout<<"This is new x position::"<<individualRover.x_position<<endl;
+                //        cout<<"This is new y position::"<<individualRover.y_position<<endl;
+                cout<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
+                individualRover.move_rover(individualRover.phi,individualRover.theta);
+                //individualRover.sensors.clear();
+            }
+        }
+    }
     
     return 0;
 }
