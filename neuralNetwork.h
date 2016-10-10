@@ -53,7 +53,7 @@ public:
 Neuron::Neuron(unsigned numOutputs, unsigned myIndex){
     for (unsigned c = 0; c < numOutputs; ++c) {
         z_outputWeights.push_back(connect());
-        z_outputWeights.back().weight = randomWeight();
+        z_outputWeights.back().weight = randomWeight() - 0.5;
     }
     z_myIndex = myIndex;
 }

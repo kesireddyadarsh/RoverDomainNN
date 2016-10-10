@@ -14,6 +14,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <math.h>
+#include <fstream>
 #include "environment.h"
 #include "POI.h"
 #include "evolutionAlgorithm.h"
@@ -23,7 +24,7 @@
 #define PI 3.14159265
 
 bool test_rover = true;
-bool runNeuralNetwork = false;
+bool runNeuralNetwork = true;
 
 
 using namespace std;
@@ -278,7 +279,7 @@ void stationary_rover_test(double x_start,double y_start){//Pass x_position,y_po
     R_obj.theta=0.0;
     int radius = 2;
     
-    double x = 0,y=0,angle=0;
+    double angle=0;
     
     P_obj.value_poi=100;
     
@@ -354,7 +355,7 @@ void stationary_rover_test_1(double x_start,double y_start){
     
     bool check_pass = false;
     
-    double x = 0,y=0,angle=0;
+    double angle=0;
     
     P_obj.value_poi=100;
     
@@ -784,14 +785,13 @@ void test_all_sensors(){
 
 //This is main function
 int main(int argc, const char * argv[]) {
-    bool print_all = false;
-    bool VERBOSE = true;
+    bool VERBOSE = false;
     srand((unsigned)time(NULL));
     
     
     if (test_rover == true) {
          test_all_sensors();
-        if (print_all) {
+        if (VERBOSE) {
             cout<<"\n\n\n$$$This is end of test all sensors function$$$\n\n"<<endl;
         }
     }
@@ -820,7 +820,6 @@ int main(int argc, const char * argv[]) {
         individualPOI.y_position_poi=50.0;
         individualPOI.value_poi=100;
         
-        
         //vectors of rovers
         vector<Rover> teamRover;
         
@@ -830,52 +829,41 @@ int main(int argc, const char * argv[]) {
         //import weight into rovers
         Rover individualRover;
         
-        
+        //object for file
+        ofstream myfile_x_y;
+        ofstream myfile_sensor;
+        myfile_x_y.open("x_y coordinates");
+        myfile_sensor.open("sensor_values");
         for (int j=0; j<numNN; j++) {
-            
-            //run the rover sensors all 8
-            //Inital x y and theta values of rover
             individualRover.x_position=10.0; //x_position of rover
             individualRover.y_position=10.0; //y_position of rover
             individualRover.theta = 0.0 ; //radians
-            
-            //X and Y distance between POI and Rover
-            //double distance_in_x_phi= individualPOI.x_position_poi-individualRover.x_position;
-            //double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
-            //    cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
-            //    cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
-            //individualRover.phi = Robj.find_phi(distance_in_x_phi,distance_in_y_phi);
-            //    cout<<"this is phi value in main::::"<<individualRover.phi<<endl;
-            
             for (int i=0; i<100; i++) {
                 individualRover.reset_sensors();
                 individualRover.sense_poi(individualPOI.x_position_poi, individualPOI.y_position_poi, individualPOI.value_poi);
+                for (int change_input=0; change_input<individualRover.sensors.size(); change_input++) {
+                    individualRover.sensors.at(change_input) /= 10;
+                }
+                for (int temp=0; temp<individualRover.sensors.size(); temp++) {
+                    myfile_sensor<<individualRover.sensors.at(temp)<<"\t";
+                }
+                myfile_sensor<<endl;
                 mypop.runNetwork(individualRover.sensors,j);
                 double dx = mypop.popVector.at(j).outputvaluesNN.at(0);
                 double dy = mypop.popVector.at(j).outputvaluesNN.at(1);
                 mypop.popVector.at(0).outputvaluesNN.clear();
-                //        cout<<"This are dx: "<<dx<<endl;
-                //        cout<<"This are dy: "<<dy<<endl;
-                //        //individualRover.theta = calculate_theta(dx,dy,individualRover.theta);
                 individualRover.move_rover(dx,dy);
                 individualRover.theta = individualRover.find_theta(dx, dy);
-                
-                //        double delta_x = (dy *sin(individualRover.theta))+(dx *sin(individualRover.theta));
-                //        double delta_y = (dy *cos(individualRover.theta))+(dx *cos(individualRover.theta));
-                //        individualRover.x_position += delta_x;
-                //        individualRover.y_position += delta_y;
-                //        double distance_in_x_phi= individualPOI.x_position_poi-individualRover.x_position;
-                //        double distance_in_y_phi= individualPOI.y_position_poi-individualRover.y_position;
-                //        cout<<"This is distance in x::"<<distance_in_x_phi<<endl;
-                //        cout<<"This is distance in y::"<<distance_in_y_phi<<endl;
-                //        //individualRover.phi = determineQuadrant(distance_in_x_phi,distance_in_y_phi);
-                //        cout<<"This is new x position::"<<individualRover.x_position<<endl;
-                //        cout<<"This is new y position::"<<individualRover.y_position<<endl;
-                cout<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
+                if(VERBOSE)
+                    cout<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
+                myfile_x_y<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
                 individualRover.move_rover(individualRover.phi,individualRover.theta);
-                //individualRover.sensors.clear();
             }
+            myfile_sensor<<endl;
+            myfile_x_y<<endl;
         }
+        myfile_sensor.close();
+        myfile_x_y.close();
     }
     
     return 0;
