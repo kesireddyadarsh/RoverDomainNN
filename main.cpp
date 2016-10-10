@@ -25,6 +25,7 @@
 
 bool test_rover = true;
 bool runNeuralNetwork = true;
+bool development_tool =false;
 
 
 using namespace std;
@@ -60,7 +61,7 @@ bool full_sensor_test(){
 
 // Tests Stationary POI and Stationary Rover in all directions
 bool POI_sensor_test(){
-    bool VERBOSE = false;
+    bool VERBOSE = development_tool;
     
     bool passfail = false;
     
@@ -342,7 +343,7 @@ void find_x_y_stationary_rover_test_1(double angle, double radius, double x_posi
 }
 
 void stationary_rover_test_1(double x_start,double y_start){
-    bool VERBOSE = false;
+    bool VERBOSE = development_tool;
     Rover R_obj; //Rover object
     POI P_obj;
     
@@ -398,7 +399,7 @@ void stationary_rover_test_1(double x_start,double y_start){
 }
 
 void stationary_poi_test(double x_start,double y_start){
-    bool VERBOSE = false;
+    bool VERBOSE = development_tool;
     Rover R_obj; //Rover object
     POI P_obj; // POI object
     vector<double> rover_position_loc;
@@ -459,7 +460,7 @@ void stationary_poi_test(double x_start,double y_start){
 }
 
 void two_rovers_test(double x_start, double y_start){
-    bool VERBOSE = false;
+    bool VERBOSE = development_tool;
     Rover R_obj; //Rover object
     POI P_obj; // POI object
     vector<double> rover_position_loc;
@@ -587,7 +588,7 @@ bool tolerance(double delta_maniplate,double check_value){
 
 
 void test_path(double x_start, double y_start){
-    bool VERBOSE = false;
+    bool VERBOSE = development_tool;
     Rover R_obj;
     POI P_obj;
     
@@ -733,7 +734,7 @@ void find_x_y_test_circle_path(double start_x_position,double start_y_position,d
 }
 
 void test_circle_path(double x_start,double y_start){
-    bool VERBOSE = false;
+    bool VERBOSE = development_tool;
     Rover R_obj;
     POI P_obj;
     
@@ -781,11 +782,44 @@ void test_all_sensors(){
 
 }
 
+double find_scaling_number(){
+    double number =0.0;
+    double temp_number =0.0;
+    Rover R_obj; //Rover object
+    POI P_obj; // POI object
+    
+    P_obj.x_position_poi=50.0;
+    P_obj.y_position_poi=100.0;
+    P_obj.value_poi =100;
+    
+    int temp_rand = rand()%100;
+    vector<vector<double>> group_sensors;
+    
+    for (int temp=0; temp<temp_rand; temp++) {
+        R_obj.x_position=rand()%100;
+        R_obj.y_position=rand()%100;
+        
+        R_obj.reset_sensors();
+        R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
+        group_sensors.push_back(R_obj.sensors);
+    }
+    
+    for (int i=0; i<group_sensors.size(); i++) {
+        temp_number=*max_element(group_sensors.at(i).begin(), group_sensors.at(i).end());
+        if (temp_number>number) {
+            number=temp_number;
+        }
+    }
+    
+    R_obj.reset_sensors();
+    
+    return number;
+}
 
 
 //This is main function
 int main(int argc, const char * argv[]) {
-    bool VERBOSE = false;
+    bool VERBOSE = development_tool;
     srand((unsigned)time(NULL));
     
     
@@ -795,7 +829,6 @@ int main(int argc, const char * argv[]) {
             cout<<"\n\n\n$$$This is end of test all sensors function$$$\n\n"<<endl;
         }
     }
-   
 
     if (runNeuralNetwork == true) {
         cout<<"\n\n Neural network"<<endl;
@@ -829,29 +862,39 @@ int main(int argc, const char * argv[]) {
         //import weight into rovers
         Rover individualRover;
         
+        //Find scaling number
+        double scaling_number = find_scaling_number();
+        int number = scaling_number;
+        
+        
         //object for file
         ofstream myfile_x_y;
         ofstream myfile_sensor;
         myfile_x_y.open("x_y coordinates");
         myfile_sensor.open("sensor_values");
-        for (int j=0; j<numNN; j++) {
+        for (int indiviualNN=0; indiviualNN<numNN; indiviualNN++) {
             individualRover.x_position=10.0; //x_position of rover
             individualRover.y_position=10.0; //y_position of rover
             individualRover.theta = 0.0 ; //radians
-            for (int i=0; i<100; i++) {
-                individualRover.reset_sensors();
-                individualRover.sense_poi(individualPOI.x_position_poi, individualPOI.y_position_poi, individualPOI.value_poi);
+            
+            for (int indiviualNN_iteration=0; indiviualNN_iteration<100; indiviualNN_iteration++) {
+                
+                individualRover.reset_sensors();// reset sensor
+                individualRover.sense_poi(individualPOI.x_position_poi, individualPOI.y_position_poi, individualPOI.value_poi);//sense all around
+                
                 for (int change_input=0; change_input<individualRover.sensors.size(); change_input++) {
-                    individualRover.sensors.at(change_input) /= 10;
-                }
+                    individualRover.sensors.at(change_input) /= number;
+                }// scaling og sensor values
+                
                 for (int temp=0; temp<individualRover.sensors.size(); temp++) {
                     myfile_sensor<<individualRover.sensors.at(temp)<<"\t";
                 }
                 myfile_sensor<<endl;
-                mypop.runNetwork(individualRover.sensors,j);
-                double dx = mypop.popVector.at(j).outputvaluesNN.at(0);
-                double dy = mypop.popVector.at(j).outputvaluesNN.at(1);
-                mypop.popVector.at(0).outputvaluesNN.clear();
+                
+                mypop.runNetwork(individualRover.sensors,indiviualNN);
+                double dx = mypop.popVector.at(indiviualNN).outputvaluesNN.at(0);
+                double dy = mypop.popVector.at(indiviualNN).outputvaluesNN.at(1);
+                mypop.popVector.at(indiviualNN).outputvaluesNN.clear();
                 individualRover.move_rover(dx,dy);
                 individualRover.theta = individualRover.find_theta(dx, dy);
                 if(VERBOSE)
