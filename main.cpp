@@ -872,63 +872,102 @@ int main(int argc, const char * argv[]) {
         ofstream myfile_sensor;
         myfile_x_y.open("x_y coordinates");
         myfile_sensor.open("sensor_values");
-        
-        for (int indiviualNN=0; indiviualNN<numNN; indiviualNN++) {
-            individualRover.x_position=10.0; //x_position of rover
-            individualRover.y_position=10.0; //y_position of rover
-            individualRover.theta = 0.0 ; //radians
-            double reward =0.0;
-            vector<double> all_rewards;
-            for (int indiviualNN_iteration=0; indiviualNN_iteration<100; indiviualNN_iteration++) {
+        ofstream myfile_generation_fitness;
+        myfile_generation_fitness.open("fitness_generation");
+        /////////////start of generation loop
+        for (int generation = 0; generation<50; generation++) {
+            for (int indiviualNN=0; indiviualNN<numNN; indiviualNN++) {
+                individualRover.x_position=10.0; //x_position of rover
+                individualRover.y_position=10.0; //y_position of rover
+                individualRover.theta = 0.0 ; //radians
                 
-                individualRover.reset_sensors();// reset sensor
-                individualRover.sense_poi(individualPOI.x_position_poi, individualPOI.y_position_poi, individualPOI.value_poi);//sense all around
-                
-                for (int change_input=0; change_input<individualRover.sensors.size(); change_input++) {
-                    individualRover.sensors.at(change_input) /= number;
-                }// scaling og sensor values
-                
-                for (int temp=0; temp<individualRover.sensors.size(); temp++) {
-                    myfile_sensor<<individualRover.sensors.at(temp)<<"\t";
+                for (int indiviualNN_iteration=0; indiviualNN_iteration<100; indiviualNN_iteration++) {
+                    
+                    individualRover.reset_sensors();// reset sensor
+                    individualRover.sense_poi(individualPOI.x_position_poi, individualPOI.y_position_poi, individualPOI.value_poi);//sense all around
+                    
+                    for (int change_input=0; change_input<individualRover.sensors.size(); change_input++) {
+                        individualRover.sensors.at(change_input) /= number;
+                    }// scaling og sensor values
+                    
+                    for (int temp=0; temp<individualRover.sensors.size(); temp++) {
+                        myfile_sensor<<individualRover.sensors.at(temp)<<"\t";
+                    }
+                    myfile_sensor<<endl;
+                    
+                    mypop.runNetwork(individualRover.sensors,indiviualNN);
+                    double dx = mypop.popVector.at(indiviualNN).outputvaluesNN.at(0);
+                    double dy = mypop.popVector.at(indiviualNN).outputvaluesNN.at(1);
+                    mypop.popVector.at(indiviualNN).outputvaluesNN.clear();
+                    individualRover.move_rover(dx,dy);
+                    
+                    if(VERBOSE)
+                        cout<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
+                    
+                    myfile_x_y<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
+                    
+                    // calculate reward value
+                    double x_distance_value = ((individualRover.x_position*individualRover.x_position) -(individualPOI.x_position_poi*individualPOI.x_position_poi));
+                    double y_distance_value =((individualRover.y_position*individualRover.y_position) -(individualPOI.y_position_poi*individualPOI.y_position_poi));
+                    if (x_distance_value<0) {
+                        x_distance_value=(-1)*x_distance_value;
+                    }
+                    if (y_distance_value<0) {
+                        y_distance_value=(-1)*y_distance_value;
+                    }
+                    double distance = sqrt((x_distance_value)+(y_distance_value));
+                    double minimum_value =((1>distance)?1:distance);
+                    individualRover.reward = (individualPOI.value_poi/minimum_value);
+                    individualRover.indi_reward.push_back(individualRover.reward);
                 }
+                
+                double temp_reward = *max_element(individualRover.indi_reward.begin(), individualRover.indi_reward.end());
+                individualRover.all_rewards.push_back(temp_reward);
+                individualRover.indi_reward.clear();
                 myfile_sensor<<endl;
-                
-                mypop.runNetwork(individualRover.sensors,indiviualNN);
-                double dx = mypop.popVector.at(indiviualNN).outputvaluesNN.at(0);
-                double dy = mypop.popVector.at(indiviualNN).outputvaluesNN.at(1);
-                mypop.popVector.at(indiviualNN).outputvaluesNN.clear();
-                individualRover.move_rover(dx,dy);
-                
-                if(VERBOSE)
-                    cout<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
-                
-                myfile_x_y<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
-                
-                // calculate reward value
-                
-                double x_distance_value = ((individualRover.x_position*individualRover.x_position) -(individualPOI.x_position_poi*individualPOI.x_position_poi));
-                double y_distance_value =((individualRover.y_position*individualRover.y_position) -(individualPOI.y_position_poi*individualPOI.y_position_poi));
-                if (x_distance_value<0) {
-                    x_distance_value=-1*x_distance_value;
-                }
-                if (y_distance_value<0) {
-                    y_distance_value=-1*y_distance_value;
-                }
-                double distance = sqrt((x_distance_value)+(y_distance_value));
-                double minimum_value =((1>distance)?1:distance);
-//                double reward = individualPOI.value_poi/minimum_value;
-                reward = reward + individualPOI.value_poi/minimum_value;
+                myfile_x_y<<endl;
             }
-            all_rewards.push_back(reward);
-            cout<<reward<<endl;
-            cout<<endl;
-            myfile_sensor<<endl;
-            myfile_x_y<<endl;
+            myfile_sensor.close();
+            myfile_x_y.close();
+            
+            //max_fitness to a text file
+            //text file genration number and fitness
+            //for (int temp_file_generation=0; temp_file_generation<individualRover.all_rewards.size(); temp_file_generation++) {
+                int temp_highest_fitness = *max_element(individualRover.all_rewards.begin(), individualRover.all_rewards.end());
+                myfile_generation_fitness<<generation<<"\t"<<temp_highest_fitness<<endl;
+            //}
+            
+            //evolution
+            double temp_selection_number= mypop.popVector.size()/2;
+            for (int selectNN=0; selectNN<(temp_selection_number); ++selectNN) {
+                double temp_random_1 = rand()%mypop.popVector.size();
+                double temp_random_2 = rand()%mypop.popVector.size();
+                while(temp_random_1==temp_random_2) {
+                    temp_random_2 = rand()%mypop.popVector.size();
+                }
+                if (individualRover.all_rewards.at(temp_random_1)>individualRover.all_rewards.at(temp_random_2)) {
+                    //delete neural network temp_random_2
+                    mypop.popVector.erase(mypop.popVector.begin()+temp_random_2);
+                    individualRover.all_rewards.erase(individualRover.all_rewards.begin()+temp_random_2);
+                }else{
+                    //delete neural network temp_random_1
+                    mypop.popVector.erase(mypop.popVector.begin()+temp_random_1);
+                    individualRover.all_rewards.erase(individualRover.all_rewards.begin()+temp_random_1);
+                }
+            }
+            individualRover.all_rewards.clear();
+            
+            //repop
+            vector<unsigned> a;
+            for (int temp =0 ; temp<numNN/2; temp++) {
+                int R = rand()% mypop.popVector.size();
+                Net N(a);
+                N=mypop.popVector.at(R);
+                N.mutate();
+                mypop.popVector.push_back(N);
+            }
         }
-        myfile_sensor.close();
-        myfile_x_y.close();
-        
-        //evolution
+        myfile_generation_fitness.close();
         
     }
     

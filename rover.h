@@ -48,6 +48,9 @@ public:
     double find_phi(double x, double y);
     double find_theta(double x_sensed, double y_sensed);
     void move_rover(double dx, double dy);
+    double reward =0.0;
+    vector<double> all_rewards;
+    vector<double> indi_reward;
 };
 
 //Function returns: sum of values of POIs divided by their distance
