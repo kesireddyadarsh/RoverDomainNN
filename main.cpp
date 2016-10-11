@@ -872,11 +872,13 @@ int main(int argc, const char * argv[]) {
         ofstream myfile_sensor;
         myfile_x_y.open("x_y coordinates");
         myfile_sensor.open("sensor_values");
+        
         for (int indiviualNN=0; indiviualNN<numNN; indiviualNN++) {
             individualRover.x_position=10.0; //x_position of rover
             individualRover.y_position=10.0; //y_position of rover
             individualRover.theta = 0.0 ; //radians
-            
+            double reward =0.0;
+            vector<double> all_rewards;
             for (int indiviualNN_iteration=0; indiviualNN_iteration<100; indiviualNN_iteration++) {
                 
                 individualRover.reset_sensors();// reset sensor
@@ -896,17 +898,38 @@ int main(int argc, const char * argv[]) {
                 double dy = mypop.popVector.at(indiviualNN).outputvaluesNN.at(1);
                 mypop.popVector.at(indiviualNN).outputvaluesNN.clear();
                 individualRover.move_rover(dx,dy);
-                individualRover.theta = individualRover.find_theta(dx, dy);
+                
                 if(VERBOSE)
                     cout<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
+                
                 myfile_x_y<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
-                individualRover.move_rover(individualRover.phi,individualRover.theta);
+                
+                // calculate reward value
+                
+                double x_distance_value = ((individualRover.x_position*individualRover.x_position) -(individualPOI.x_position_poi*individualPOI.x_position_poi));
+                double y_distance_value =((individualRover.y_position*individualRover.y_position) -(individualPOI.y_position_poi*individualPOI.y_position_poi));
+                if (x_distance_value<0) {
+                    x_distance_value=-1*x_distance_value;
+                }
+                if (y_distance_value<0) {
+                    y_distance_value=-1*y_distance_value;
+                }
+                double distance = sqrt((x_distance_value)+(y_distance_value));
+                double minimum_value =((1>distance)?1:distance);
+//                double reward = individualPOI.value_poi/minimum_value;
+                reward = reward + individualPOI.value_poi/minimum_value;
             }
+            all_rewards.push_back(reward);
+            cout<<reward<<endl;
+            cout<<endl;
             myfile_sensor<<endl;
             myfile_x_y<<endl;
         }
         myfile_sensor.close();
         myfile_x_y.close();
+        
+        //evolution
+        
     }
     
     return 0;
