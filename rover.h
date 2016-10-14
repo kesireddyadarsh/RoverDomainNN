@@ -49,8 +49,19 @@ public:
     double find_theta(double x_sensed, double y_sensed);
     void move_rover(double dx, double dy);
     double reward =0.0;
-    vector<double> all_rewards;
+    vector<double> max_reward;
     vector<double> indi_reward;
+    vector<double> temp_x_position;
+    vector<double> temp_y_position;
+    vector<double> temp_rewards;
+    vector<vector<double>> temp_x_position_nn;
+    vector<vector<double>> temp_y_position_nn;
+    vector<vector<vector<double>>> temp_sensor_nn;
+    vector<vector<double>> temp_rewards_nn;
+    vector<vector<double>> temp_sensor;
+    vector<double> x_position_vec;
+    vector<double> y_position_vec;
+    vector<vector<double>> sensor_vec;
 };
 
 //Function returns: sum of values of POIs divided by their distance
@@ -114,11 +125,11 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     double phi = find_phi(x_sensed, y_sensed);
     double quadrant_angle = phi - theta;
     quadrant_angle = resolve(quadrant_angle);
-//    cout << "IN QUAD: FIND PHI: " << phi << endl;
+    //    cout << "IN QUAD: FIND PHI: " << phi << endl;
     
     phi = resolve(phi);
     
-//    cout << "IN QUAD: FIND PHI2: " << phi << endl;
+    //    cout << "IN QUAD: FIND PHI2: " << phi << endl;
     
     int case_number;
     if ((0<=quadrant_angle && 45>= quadrant_angle)||(315<quadrant_angle && 360>= quadrant_angle)) {
@@ -136,8 +147,8 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     }
     quadrant = case_number;
     
-//    cout << "QUADANGLE =  " << quadrant_angle << endl;
-//    cout << "QUADRANT = " << quadrant << endl;
+    //    cout << "QUADANGLE =  " << quadrant_angle << endl;
+    //    cout << "QUADRANT = " << quadrant << endl;
     
     return quadrant;
 }
@@ -160,36 +171,36 @@ void Rover::move_rover(double dx, double dy){
 
 
 /*
-void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi){
-    cout<<"THis is phi value:::"<<phi<<endl;
-    if (phi>360) {
-        phi = phi-360;
-    }
-    int case_number = 0;
-    if ((0<=phi && 45>= phi)||(315<phi && 360>= phi)) {
-        //do something in Q1
-        case_number = 1;
-    }else if ((45<phi && 135>= phi)) {
-        // do something in Q2
-        case_number = 2;
-    }else if((135<phi && 225>= phi)){
-        //do something in Q3
-        case_number = 3;
-    }else if((225<phi && 315>= phi)){
-        //do something in Q4
-        case_number = 4;
-    }
-    for (int i=1; i<5; i++) {
-        if (case_number == i) {
-            //sensors.push_back(sense_poi(x_position_poi,y_position_poi));
-        }else{
-            sensors.push_back(0);
-        }
-    }
-    for (int i=0; i<4; i++) {
-        //sensors.push_back(sense_rover(x_position_otherrover,y_position_otherrover));
-    }
-}*/
+ void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi){
+ cout<<"THis is phi value:::"<<phi<<endl;
+ if (phi>360) {
+ phi = phi-360;
+ }
+ int case_number = 0;
+ if ((0<=phi && 45>= phi)||(315<phi && 360>= phi)) {
+ //do something in Q1
+ case_number = 1;
+ }else if ((45<phi && 135>= phi)) {
+ // do something in Q2
+ case_number = 2;
+ }else if((135<phi && 225>= phi)){
+ //do something in Q3
+ case_number = 3;
+ }else if((225<phi && 315>= phi)){
+ //do something in Q4
+ case_number = 4;
+ }
+ for (int i=1; i<5; i++) {
+ if (case_number == i) {
+ //sensors.push_back(sense_poi(x_position_poi,y_position_poi));
+ }else{
+ sensors.push_back(0);
+ }
+ }
+ for (int i=0; i<4; i++) {
+ //sensors.push_back(sense_rover(x_position_otherrover,y_position_otherrover));
+ }
+ }*/
 
 
 

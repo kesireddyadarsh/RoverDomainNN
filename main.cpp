@@ -95,11 +95,11 @@ bool POI_sensor_test(){
     assert(pass1 == true);
     
     if(VERBOSE){
-    cout << "Direct north case: " << endl;
-    for(int sen = 0; sen < R.sensors.size(); sen++){
-        cout << R.sensors.at(sen) << "\t";
-    }
-    cout << endl;
+        cout << "Direct north case: " << endl;
+        for(int sen = 0; sen < R.sensors.size(); sen++){
+            cout << R.sensors.at(sen) << "\t";
+        }
+        cout << endl;
     }
     
     /// POI directly south, sensor 2 should read; no others.
@@ -145,7 +145,7 @@ bool POI_sensor_test(){
         }
         cout << endl;
     }
-
+    
     
     /// POI directly west, sensor 3 should read; no others.
     P.x_position_poi = -1;
@@ -373,23 +373,23 @@ void stationary_rover_test_1(double x_start,double y_start){
         }else  if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) != 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) == 0) {
             if (VERBOSE) {
                 cout<<"Pass Quad 1"<<endl;
-
+                
             }
-                check_pass = true;
-            }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) !=0 && R_obj.sensors.at(3) == 0) {
-                if (VERBOSE) {
-                    cout<<"Pass Quad 2"<<endl;
-                }
-                check_pass = true;
-            }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) != 0) {
-                if (VERBOSE) {
-                    cout<<"Pass Quad 3"<<endl;
-                }
-                check_pass = true;
-            }else{
-                cout<<"Issue at an angle ::"<<angle<<" with x_position and y_position"<<R_obj.x_position<<R_obj.y_position<<endl;
-                exit(10);
+            check_pass = true;
+        }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) !=0 && R_obj.sensors.at(3) == 0) {
+            if (VERBOSE) {
+                cout<<"Pass Quad 2"<<endl;
             }
+            check_pass = true;
+        }else if (R_obj.sensors.at(0) == 0 && R_obj.sensors.at(1) == 0 && R_obj.sensors.at(2) ==0 && R_obj.sensors.at(3) != 0) {
+            if (VERBOSE) {
+                cout<<"Pass Quad 3"<<endl;
+            }
+            check_pass = true;
+        }else{
+            cout<<"Issue at an angle ::"<<angle<<" with x_position and y_position"<<R_obj.x_position<<R_obj.y_position<<endl;
+            exit(10);
+        }
         assert(check_pass==true);
         poi_positions_loc.clear();
         R_obj.reset_sensors();
@@ -527,7 +527,7 @@ void two_rovers_test(double x_start, double y_start){
         R_obj.theta+=7;
         R_obj.reset_sensors();
     }
-
+    
 }
 
 vector<double> row_values;
@@ -721,7 +721,7 @@ void test_path(double x_start, double y_start){
     }
     assert(check_assert);
     check_assert=false;
-
+    
 }
 
 vector<vector<double>> point_x_y_circle;
@@ -779,7 +779,7 @@ void test_all_sensors(){
     test_path(x_start,y_start);
     x_start = 0.0, y_start = 0.0;
     test_circle_path(x_start,y_start);
-
+    
 }
 
 double find_scaling_number(){
@@ -824,14 +824,16 @@ int main(int argc, const char * argv[]) {
     
     
     if (test_rover == true) {
-         test_all_sensors();
+        test_all_sensors();
         if (VERBOSE) {
             cout<<"\n\n\n$$$This is end of test all sensors function$$$\n\n"<<endl;
         }
     }
-
+    
     if (runNeuralNetwork == true) {
         cout<<"\n\n Neural network"<<endl;
+        
+        
         //Create numNN of neural network
         int numNN=100;
         //int numCases = 4;
@@ -866,21 +868,20 @@ int main(int argc, const char * argv[]) {
         double scaling_number = find_scaling_number();
         int number = scaling_number;
         
+        vector<int> index_highest_fitness_iteration;
         
         //object for file
-        ofstream myfile_x_y;
-        ofstream myfile_sensor;
-        myfile_x_y.open("x_y coordinates");
-        myfile_sensor.open("sensor_values");
         ofstream myfile_generation_fitness;
         myfile_generation_fitness.open("fitness_generation");
+//                            ofstream myfile_x_y;
+//                            myfile_x_y.open("x_y_position_");
+
         /////////////start of generation loop
-        for (int generation = 0; generation<50; generation++) {
+        for (int generation = 0; generation<500; generation++) {
             for (int indiviualNN=0; indiviualNN<numNN; indiviualNN++) {
                 individualRover.x_position=10.0; //x_position of rover
                 individualRover.y_position=10.0; //y_position of rover
                 individualRover.theta = 0.0 ; //radians
-                
                 for (int indiviualNN_iteration=0; indiviualNN_iteration<100; indiviualNN_iteration++) {
                     
                     individualRover.reset_sensors();// reset sensor
@@ -889,11 +890,6 @@ int main(int argc, const char * argv[]) {
                     for (int change_input=0; change_input<individualRover.sensors.size(); change_input++) {
                         individualRover.sensors.at(change_input) /= number;
                     }// scaling og sensor values
-                    
-                    for (int temp=0; temp<individualRover.sensors.size(); temp++) {
-                        myfile_sensor<<individualRover.sensors.at(temp)<<"\t";
-                    }
-                    myfile_sensor<<endl;
                     
                     mypop.runNetwork(individualRover.sensors,indiviualNN);
                     double dx = mypop.popVector.at(indiviualNN).outputvaluesNN.at(0);
@@ -904,8 +900,9 @@ int main(int argc, const char * argv[]) {
                     if(VERBOSE)
                         cout<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
                     
-                    myfile_x_y<<individualRover.x_position<<"\t"<<individualRover.y_position<<endl;
-                    
+                    individualRover.temp_x_position.push_back(individualRover.x_position);
+                    individualRover.temp_y_position.push_back(individualRover.y_position);
+                    individualRover.temp_sensor.push_back(individualRover.sensors);
                     // calculate reward value
                     double x_distance_value = ((individualRover.x_position*individualRover.x_position) -(individualPOI.x_position_poi*individualPOI.x_position_poi));
                     double y_distance_value =((individualRover.y_position*individualRover.y_position) -(individualPOI.y_position_poi*individualPOI.y_position_poi));
@@ -919,23 +916,65 @@ int main(int argc, const char * argv[]) {
                     double minimum_value =((1>distance)?1:distance);
                     individualRover.reward = (individualPOI.value_poi/minimum_value);
                     individualRover.indi_reward.push_back(individualRover.reward);
+                    
                 }
-                
                 double temp_reward = *max_element(individualRover.indi_reward.begin(), individualRover.indi_reward.end());
-                individualRover.all_rewards.push_back(temp_reward);
+                individualRover.max_reward.push_back(temp_reward);
+                int index =0;
+                for (; index<individualRover.indi_reward.size(); index++) {
+                    if (temp_reward == individualRover.indi_reward.at(index)) {
+                        index_highest_fitness_iteration.push_back(index);
+                    }
+                }
+                individualRover.temp_x_position_nn.push_back(individualRover.temp_x_position);
+                individualRover.temp_y_position_nn.push_back(individualRover.temp_y_position);
+                individualRover.temp_sensor_nn.push_back(individualRover.temp_sensor);
+                individualRover.temp_rewards_nn.push_back(individualRover.indi_reward);
+                
+                individualRover.temp_x_position.clear();
+                individualRover.temp_y_position.clear();
+                individualRover.temp_sensor.clear();
                 individualRover.indi_reward.clear();
-                myfile_sensor<<endl;
-                myfile_x_y<<endl;
             }
-            myfile_sensor.close();
-            myfile_x_y.close();
             
-            //max_fitness to a text file
-            //text file genration number and fitness
-            //for (int temp_file_generation=0; temp_file_generation<individualRover.all_rewards.size(); temp_file_generation++) {
-                int temp_highest_fitness = *max_element(individualRover.all_rewards.begin(), individualRover.all_rewards.end());
-                myfile_generation_fitness<<generation<<"\t"<<temp_highest_fitness<<endl;
-            //}
+            
+            double temp_highest_fitness = *max_element(individualRover.max_reward.begin(), individualRover.max_reward.end());
+            myfile_generation_fitness<<generation<<"\t"<<temp_highest_fitness<<endl;
+            
+//            bool found_neural_network = false;
+//            for (int i=0 ; i<individualRover.temp_rewards_nn.size(); i++) { //i is neural network
+//                for(int j=0;j<individualRover.temp_rewards_nn.at(i).size();j++){
+//                    if(temp_highest_fitness == individualRover.temp_rewards_nn.at(i).at(j)){
+//                        found_neural_network =true;
+//                        break;
+//                    }
+//                }
+//                if (found_neural_network) {
+//                ofstream myfile_x_y;
+//                myfile_x_y.open("x_y_position_"+to_string(generation)+"_"+to_string(i));
+//                for (int k=0; k<individualRover.temp_x_position_nn.at(i).size(); k++) {
+//                    myfile_x_y<<individualRover.temp_x_position_nn.at(i).at(k)<<"\t"<<individualRover.temp_y_position_nn.at(i).at(k)<<endl;
+//                }
+//                myfile_x_y.close();
+//                    break;
+//                }
+//            }
+//            myfile_x_y<<endl;
+            
+            for (int i=0; (i<individualRover.temp_x_position_nn.size() && i<individualRover.temp_y_position_nn.size()); i++) {
+                ofstream myfile_x_y;
+                myfile_x_y.open("x_y_position_"+to_string(generation)+"_"+to_string(i));
+                for (int j=0; j<individualRover.temp_x_position_nn.at(i).size(); j++) {
+                    myfile_x_y<<individualRover.temp_x_position_nn.at(i).at(j)<<"\t"<<individualRover.temp_y_position_nn.at(i).at(j)<<endl;
+                }
+                myfile_x_y.close();
+            }
+            
+            individualRover.temp_rewards_nn.clear();
+            individualRover.temp_y_position_nn.clear();
+            individualRover.temp_x_position_nn.clear();
+            individualRover.temp_sensor_nn.clear();
+            index_highest_fitness_iteration.clear();
             
             //evolution
             double temp_selection_number= mypop.popVector.size()/2;
@@ -945,17 +984,17 @@ int main(int argc, const char * argv[]) {
                 while(temp_random_1==temp_random_2) {
                     temp_random_2 = rand()%mypop.popVector.size();
                 }
-                if (individualRover.all_rewards.at(temp_random_1)>individualRover.all_rewards.at(temp_random_2)) {
+                if (individualRover.max_reward.at(temp_random_1)>individualRover.max_reward.at(temp_random_2)) {
                     //delete neural network temp_random_2
                     mypop.popVector.erase(mypop.popVector.begin()+temp_random_2);
-                    individualRover.all_rewards.erase(individualRover.all_rewards.begin()+temp_random_2);
+                    individualRover.max_reward.erase(individualRover.max_reward.begin()+temp_random_2);
                 }else{
                     //delete neural network temp_random_1
                     mypop.popVector.erase(mypop.popVector.begin()+temp_random_1);
-                    individualRover.all_rewards.erase(individualRover.all_rewards.begin()+temp_random_1);
+                    individualRover.max_reward.erase(individualRover.max_reward.begin()+temp_random_1);
                 }
             }
-            individualRover.all_rewards.clear();
+            individualRover.max_reward.clear();
             
             //repop
             vector<unsigned> a;
@@ -968,6 +1007,8 @@ int main(int argc, const char * argv[]) {
             }
         }
         myfile_generation_fitness.close();
+//        myfile_x_y.close();
+
         
     }
     
