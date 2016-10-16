@@ -21,6 +21,8 @@
 #include "rover.h"
 #include "neuralNetwork.h"
 
+
+//This contains vectors and multiple POI's
 #define PI 3.14159265
 
 bool test_rover = true;
