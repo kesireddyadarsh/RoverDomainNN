@@ -49,19 +49,7 @@ public:
     double find_theta(double x_sensed, double y_sensed);
     void move_rover(double dx, double dy);
     double reward =0.0;
-    vector<double> max_reward;
-    vector<double> indi_reward;
-    vector<double> temp_x_position;
-    vector<double> temp_y_position;
-    vector<double> temp_rewards;
-    vector<vector<double>> temp_x_position_nn;
-    vector<vector<double>> temp_y_position_nn;
-    vector<vector<vector<double>>> temp_sensor_nn;
-    vector<vector<double>> temp_rewards_nn;
-    vector<vector<double>> temp_sensor;
-    vector<double> x_position_vec;
-    vector<double> y_position_vec;
-    vector<vector<double>> sensor_vec;
+    void sense_all_values(vector<double> x_position_poi_vec_rover,vector<double> y_position_poi_vec_rover,vector<double> value_poi_vec_rover);
 };
 
 //Function returns: sum of values of POIs divided by their distance
@@ -169,38 +157,35 @@ void Rover::move_rover(double dx, double dy){
 }
 
 
-
-/*
- void Rover::get_all_sensorvalues(double x_position_poi,double y_position_poi,double x_position_otherrover, double y_position_otherrover, double phi){
- cout<<"THis is phi value:::"<<phi<<endl;
- if (phi>360) {
- phi = phi-360;
- }
- int case_number = 0;
- if ((0<=phi && 45>= phi)||(315<phi && 360>= phi)) {
- //do something in Q1
- case_number = 1;
- }else if ((45<phi && 135>= phi)) {
- // do something in Q2
- case_number = 2;
- }else if((135<phi && 225>= phi)){
- //do something in Q3
- case_number = 3;
- }else if((225<phi && 315>= phi)){
- //do something in Q4
- case_number = 4;
- }
- for (int i=1; i<5; i++) {
- if (case_number == i) {
- //sensors.push_back(sense_poi(x_position_poi,y_position_poi));
- }else{
- sensors.push_back(0);
- }
- }
- for (int i=0; i<4; i++) {
- //sensors.push_back(sense_rover(x_position_otherrover,y_position_otherrover));
- }
- }*/
+void Rover::sense_all_values(vector<double> x_position_poi_vec_rover,vector<double> y_position_poi_vec_rover,vector<double> value_poi_vec_rover){
+    bool VERBOSE = false;
+    reset_sensors();
+    
+    double temp_delta_value = 0.0;
+    vector<double> temp_delta_vec;
+    int temp_quad_value =0;
+    vector<double> temp_quad_vec;
+    
+    assert(x_position_poi_vec_rover.size() == y_position_poi_vec_rover.size());
+    assert(value_poi_vec_rover.size() == y_position_poi_vec_rover.size());
+    
+    for (int value_calculating_delta = 0 ; value_calculating_delta < x_position_poi_vec_rover.size(); value_calculating_delta++) {
+        temp_delta_value = sense_poi_delta(x_position_poi_vec_rover.at(value_calculating_delta), y_position_poi_vec_rover.at(value_calculating_delta));
+        temp_delta_vec.push_back(temp_delta_value);
+    }
+    
+    for (int value_calculating_quad = 0 ; value_calculating_quad < x_position_poi_vec_rover.size(); value_calculating_quad++) {
+        temp_quad_value = find_quad(x_position_poi_vec_rover.at(value_calculating_quad), y_position_poi_vec_rover.at(value_calculating_quad));
+        temp_quad_vec.push_back(temp_quad_value);
+    }
+    
+    assert(temp_delta_vec.size()== temp_quad_vec.size());
+    
+    for (int update_sensor = 0 ; update_sensor<temp_quad_vec.size(); update_sensor++) {
+        sensors.at(temp_quad_vec.at(update_sensor)) += value_poi_vec_rover.at(update_sensor)/temp_delta_vec.at(update_sensor);
+    }
+    
+}
 
 
 

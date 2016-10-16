@@ -30,6 +30,9 @@ public:
     double x_position_poi,y_position_poi,value_poi;
     //Environment test;
     //vector<Rover> individualRover;
+    vector<double> x_position_poi_vec;
+    vector<double> y_position_poi_vec;
+    vector<double> value_poi_vec;
 };
 
 #endif /* POI_h */
