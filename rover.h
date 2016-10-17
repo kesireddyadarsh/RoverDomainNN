@@ -50,6 +50,24 @@ public:
     void move_rover(double dx, double dy);
     double reward =0.0;
     void sense_all_values(vector<double> x_position_poi_vec_rover,vector<double> y_position_poi_vec_rover,vector<double> value_poi_vec_rover);
+    
+    //stored values
+    vector<double> x_position_rover_iteration_vec;
+    vector<double> y_position_rover_iteration_vec;
+    vector<vector<double>> x_position_rover_nn_vec;
+    vector<vector<double>> y_position_rover_nn_vec;
+    vector<vector<double>> sensor_rover_iteration_vec;
+    vector<vector<vector<double>>> sensor_rover_nn_vec;
+    vector<double> max_reward;
+    vector<double> indi_reward;
+    
+    vector<vector<vector<double>>> temp_sensor_nn;
+    vector<vector<double>> temp_rewards_nn;
+    vector<double> temp_rewards;
+    
+    vector<double> closest_dist_to_poi;
+
+    
 };
 
 //Function returns: sum of values of POIs divided by their distance

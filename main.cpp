@@ -784,6 +784,40 @@ void test_all_sensors(){
     
 }
 
+double find_scaling_number(){
+    double number =0.0;
+    double temp_number =0.0;
+    Rover R_obj; //Rover object
+    POI P_obj; // POI object
+    
+    P_obj.x_position_poi=50.0;
+    P_obj.y_position_poi=100.0;
+    P_obj.value_poi =100;
+    
+    int temp_rand = rand()%100;
+    vector<vector<double>> group_sensors;
+    
+    for (int temp=0; temp<temp_rand; temp++) {
+        R_obj.x_position=rand()%100;
+        R_obj.y_position=rand()%100;
+        
+        R_obj.reset_sensors();
+        R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
+        group_sensors.push_back(R_obj.sensors);
+    }
+    
+    for (int i=0; i<group_sensors.size(); i++) {
+        temp_number=*max_element(group_sensors.at(i).begin(), group_sensors.at(i).end());
+        if (temp_number>number) {
+            number=temp_number;
+        }
+    }
+    
+    R_obj.reset_sensors();
+    
+    return number;
+}
+
 //This is main function
 int main(int argc, const char * argv[]) {
     bool VERBOSE = development_tool;
@@ -815,41 +849,172 @@ int main(int argc, const char * argv[]) {
         int x_position_otherRover=NULL;
         int y_position_otherRover=NULL;
         
+        int number_of_rovers = 1;
+        int number_of_poi = 2;
+        
         Environment world;
         //Set values of poi's
         POI individualPOI;
         individualPOI.x_position_poi_vec.push_back(30.0);
-        individualPOI.x_position_poi_vec.push_back(150.0);
+        individualPOI.x_position_poi_vec.push_back(35.0);
         individualPOI.y_position_poi_vec.push_back(50.0);
-        individualPOI.y_position_poi_vec.push_back(100.0);
+        individualPOI.y_position_poi_vec.push_back(55.0);
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
+        
+        double total_value_poi = 0.0;
+        
+        for (int t = 0 ; t<individualPOI.value_poi_vec.size(); t++) {
+            total_value_poi += individualPOI.value_poi_vec.at(t);
+        }
         
         assert(individualPOI.x_position_poi_vec.size() == individualPOI.y_position_poi_vec.size());
         assert(individualPOI.value_poi_vec.size() == individualPOI.y_position_poi_vec.size());
         
         //vectors of rovers
         vector<Rover> teamRover;
+        Rover a;
+        teamRover.push_back(a);
         
-        //Rover object
-        Rover individualRover;
-        individualRover.x_position = 0.0;
-        individualRover.y_position = 0.0;
+//        //Rover object
+//        Rover individualRover;
+        teamRover.at(0).x_position = 0.0;
+        teamRover.at(0).y_position = 0.0;
         
-        //multiple POI
-        individualRover.reset_sensors();
-        
-        
-        
-        individualRover.sense_all_values(individualPOI.x_position_poi_vec,individualPOI.y_position_poi_vec,individualPOI.value_poi_vec);
-        
-        for (int temp =0 ; temp<individualRover.sensors.size(); temp++) {
-            cout<<individualRover.sensors.at(temp)<<"\t";
+        for (int k=0; k<number_of_rovers; k++) {
+            for (int j=0; j<number_of_poi; j++) {
+                teamRover.at(k).closest_dist_to_poi.push_back(99999999.99);
+            }
         }
         
-        cout<<endl;
+        //multiple POI test sensor
         
+        vector<int> index_highest_fitness_iteration;
+        vector<double> distance_rover_poi;
         
+        //object for file
+        
+        ofstream myfile_generation_fitness;
+        myfile_generation_fitness.open("fitness_generation");
+        for(int generation =0; generation<100;generation++){
+            for (int indiviualNN=0; indiviualNN<numNN; indiviualNN++) {
+                teamRover.at(0).x_position=0.0; //x_position of rover
+                teamRover.at(0).y_position=0.0; //y_position of rover
+                teamRover.at(0).theta = 0.0 ; //radians
+                for (int indiviualNN_iteration=0; indiviualNN_iteration<100; indiviualNN_iteration++) {
+                    teamRover.at(0).reset_sensors();
+                    teamRover.at(0).sense_all_values(individualPOI.x_position_poi_vec,individualPOI.y_position_poi_vec,individualPOI.value_poi_vec);
+                    mypop.runNetwork(teamRover.at(0).sensors, indiviualNN);
+                    double dx = mypop.popVector.at(indiviualNN).outputvaluesNN.at(0);
+                    double dy = mypop.popVector.at(indiviualNN).outputvaluesNN.at(1);
+                    mypop.popVector.at(indiviualNN).outputvaluesNN.clear();
+                    
+                    teamRover.at(0).move_rover(dx,dy);
+                    
+                    teamRover.at(0).x_position_rover_iteration_vec.push_back(teamRover.at(0).x_position);
+                    teamRover.at(0).y_position_rover_iteration_vec.push_back(teamRover.at(0).y_position);
+                    teamRover.at(0).sensor_rover_iteration_vec.push_back(teamRover.at(0).sensors);
+                    
+                    // calculate reward value
+                    for (int cal_dis =0; cal_dis<individualPOI.value_poi_vec.size(); cal_dis++) {
+                        double x_distance_cal =((teamRover.at(0).x_position) -(individualPOI.x_position_poi_vec.at(cal_dis)));
+                        double y_distance_cal = ((teamRover.at(0).y_position) -(individualPOI.y_position_poi_vec.at(cal_dis)));
+                        double distance = sqrt((x_distance_cal*x_distance_cal)+(y_distance_cal*y_distance_cal));
+//                        double cal_value =((1>distance)?1:distance);
+                        distance_rover_poi.push_back(distance);
+                    }
+                    double temp_deno_value = *min_element(distance_rover_poi.begin(), distance_rover_poi.end());
+                    teamRover.at(0).reward = (total_value_poi/temp_deno_value);
+                    teamRover.at(0).indi_reward.push_back(teamRover.at(0).reward);
+                }
+                
+                double temp_reward = *max_element(teamRover.at(0).indi_reward.begin(), teamRover.at(0).indi_reward.end());
+                teamRover.at(0).max_reward.push_back(temp_reward);
+//                int index =0;
+//                for (; index<individualRover.indi_reward.size(); index++) {
+//                    if (temp_reward == individualRover.indi_reward.at(index)) {
+//                        index_highest_fitness_iteration.push_back(index);
+//                    }
+//                }
+                
+                
+                
+                teamRover.at(0).x_position_rover_nn_vec.push_back(teamRover.at(0).x_position_rover_iteration_vec);
+                teamRover.at(0).y_position_rover_nn_vec.push_back(teamRover.at(0).y_position_rover_iteration_vec);
+                teamRover.at(0).sensor_rover_nn_vec.push_back(teamRover.at(0).sensor_rover_iteration_vec);
+                teamRover.at(0).temp_rewards_nn.push_back(teamRover.at(0).indi_reward);
+
+                
+                teamRover.at(0).x_position_rover_iteration_vec.clear();
+                teamRover.at(0).y_position_rover_iteration_vec.clear();
+                teamRover.at(0).sensor_rover_iteration_vec.clear();
+                teamRover.at(0).indi_reward.clear();
+                
+                
+            }
+            
+            double temp_highest_fitness = *max_element(teamRover.at(0).max_reward.begin(), teamRover.at(0).max_reward.end());
+            myfile_generation_fitness<<generation<<"\t"<<temp_highest_fitness<<endl;
+            
+            
+            
+            /*for (int i=0 ; i<individualRover.temp_rewards_nn.size(); i++) { //i is neural network
+                bool found_neural_network = false;
+                for(int j=0;j<individualRover.temp_rewards_nn.at(i).size();j++){
+                    if(temp_highest_fitness == individualRover.temp_rewards_nn.at(i).at(j)){
+                        found_neural_network =true;
+                        break;
+                    }
+                }
+                if (found_neural_network) {
+                ofstream myfile_x_y;
+                myfile_x_y.open("x_y_position_"+to_string(generation)+"_"+to_string(i));
+                for (int k=0; k<individualRover.x_position_rover_nn_vec.at(i).size(); k++) {
+myfile_x_y<<individualRover.x_position_rover_nn_vec.at(i).at(k)<<"\t"<<individualRover.y_position_rover_nn_vec.at(i).at(k)<<endl;
+
+                }
+
+                myfile_x_y.close();
+
+                    break;
+
+                }
+
+            }
+
+            //myfile_x_y<<endl;*/
+            
+            //evolution
+            double temp_selection_number= mypop.popVector.size()/2;
+            for (int selectNN=0; selectNN<(temp_selection_number); ++selectNN) {
+                double temp_random_1 = rand()%mypop.popVector.size();
+                double temp_random_2 = rand()%mypop.popVector.size();
+                while(temp_random_1==temp_random_2) {
+                    temp_random_2 = rand()%mypop.popVector.size();
+                }
+                if (teamRover.at(0).max_reward.at(temp_random_1)>teamRover.at(0).max_reward.at(temp_random_2)) {
+                    //delete neural network temp_random_2
+                    mypop.popVector.erase(mypop.popVector.begin()+temp_random_2);
+                    teamRover.at(0).max_reward.erase(teamRover.at(0).max_reward.begin()+temp_random_2);
+                }else{
+                    //delete neural network temp_random_1
+                    mypop.popVector.erase(mypop.popVector.begin()+temp_random_1);
+                    teamRover.at(0).max_reward.erase(teamRover.at(0).max_reward.begin()+temp_random_1);
+                }
+            }
+            teamRover.at(0).max_reward.clear();
+            
+            //repop
+            vector<unsigned> a;
+            for (int temp =0 ; temp<numNN/2; temp++) {
+                int R = rand()% mypop.popVector.size();
+                Net N(a);
+                N=mypop.popVector.at(R);
+                N.mutate();
+                mypop.popVector.push_back(N);
+            }
+            
+        }
     }
 
     
