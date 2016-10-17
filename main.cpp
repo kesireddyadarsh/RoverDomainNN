@@ -925,26 +925,28 @@ int main(int argc, const char * argv[]) {
                     }
                     double temp_deno_value = *min_element(distance_rover_poi.begin(), distance_rover_poi.end());
                     teamRover.at(0).reward = (total_value_poi/temp_deno_value);
+                    
+                    //Check Closest Distance
+                    
+                    assert(teamRover.at(0).closest_dist_to_poi.size() == distance_rover_poi.size());
+                    for (int c = 0; c<distance_rover_poi.size(); c++) {
+                        if (teamRover.at(0).closest_dist_to_poi.at(c) >= distance_rover_poi.at(c)) {
+                            teamRover.at(0).closest_dist_to_poi.at(c) = distance_rover_poi.at(c);
+                        }
+                    }
+                    
                     teamRover.at(0).indi_reward.push_back(teamRover.at(0).reward);
+                    distance_rover_poi.clear();
                 }
                 
                 double temp_reward = *max_element(teamRover.at(0).indi_reward.begin(), teamRover.at(0).indi_reward.end());
                 teamRover.at(0).max_reward.push_back(temp_reward);
-//                int index =0;
-//                for (; index<individualRover.indi_reward.size(); index++) {
-//                    if (temp_reward == individualRover.indi_reward.at(index)) {
-//                        index_highest_fitness_iteration.push_back(index);
-//                    }
-//                }
-                
                 
                 
                 teamRover.at(0).x_position_rover_nn_vec.push_back(teamRover.at(0).x_position_rover_iteration_vec);
                 teamRover.at(0).y_position_rover_nn_vec.push_back(teamRover.at(0).y_position_rover_iteration_vec);
                 teamRover.at(0).sensor_rover_nn_vec.push_back(teamRover.at(0).sensor_rover_iteration_vec);
                 teamRover.at(0).temp_rewards_nn.push_back(teamRover.at(0).indi_reward);
-
-                
                 teamRover.at(0).x_position_rover_iteration_vec.clear();
                 teamRover.at(0).y_position_rover_iteration_vec.clear();
                 teamRover.at(0).sensor_rover_iteration_vec.clear();
