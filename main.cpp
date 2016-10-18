@@ -892,8 +892,13 @@ int main(int argc, const char * argv[]) {
         vector<int> index_highest_fitness_iteration;
         vector<double> distance_rover_poi;
         
-        //object for file
+        //Find scaling number
+        double scaling_number = find_scaling_number();
+        int number = scaling_number;
         
+        //object for file
+        //file* check out
+        //fopen
         ofstream myfile_generation_fitness;
         myfile_generation_fitness.open("fitness_generation");
         for(int generation =0; generation<100;generation++){
@@ -904,6 +909,11 @@ int main(int argc, const char * argv[]) {
                 for (int indiviualNN_iteration=0; indiviualNN_iteration<100; indiviualNN_iteration++) {
                     teamRover.at(0).reset_sensors();
                     teamRover.at(0).sense_all_values(individualPOI.x_position_poi_vec,individualPOI.y_position_poi_vec,individualPOI.value_poi_vec);
+                    
+                    for (int change_input=0; change_input<teamRover.at(0).sensors.size(); change_input++) {
+                        teamRover.at(0).sensors.at(change_input) /= number;
+                    }// scaling og sensor values
+                    
                     mypop.runNetwork(teamRover.at(0).sensors, indiviualNN);
                     double dx = mypop.popVector.at(indiviualNN).outputvaluesNN.at(0);
                     double dy = mypop.popVector.at(indiviualNN).outputvaluesNN.at(1);
@@ -920,8 +930,8 @@ int main(int argc, const char * argv[]) {
                         double x_distance_cal =((teamRover.at(0).x_position) -(individualPOI.x_position_poi_vec.at(cal_dis)));
                         double y_distance_cal = ((teamRover.at(0).y_position) -(individualPOI.y_position_poi_vec.at(cal_dis)));
                         double distance = sqrt((x_distance_cal*x_distance_cal)+(y_distance_cal*y_distance_cal));
-//                        double cal_value =((1>distance)?1:distance);
-                        distance_rover_poi.push_back(distance);
+                        double cal_value =((1>distance)?1:distance);
+                        distance_rover_poi.push_back(cal_value);
                     }
                     double temp_deno_value = *min_element(distance_rover_poi.begin(), distance_rover_poi.end());
                     teamRover.at(0).reward = (total_value_poi/temp_deno_value);
@@ -935,12 +945,16 @@ int main(int argc, const char * argv[]) {
                         }
                     }
                     
+                    assert(teamRover.at(0).reward <= 200);
+                    
                     teamRover.at(0).indi_reward.push_back(teamRover.at(0).reward);
                     distance_rover_poi.clear();
                 }
                 
                 double temp_reward = *max_element(teamRover.at(0).indi_reward.begin(), teamRover.at(0).indi_reward.end());
                 teamRover.at(0).max_reward.push_back(temp_reward);
+                
+                assert(temp_reward <= 200);
                 
                 
                 teamRover.at(0).x_position_rover_nn_vec.push_back(teamRover.at(0).x_position_rover_iteration_vec);
@@ -958,7 +972,40 @@ int main(int argc, const char * argv[]) {
             double temp_highest_fitness = *max_element(teamRover.at(0).max_reward.begin(), teamRover.at(0).max_reward.end());
             myfile_generation_fitness<<generation<<"\t"<<temp_highest_fitness<<endl;
             
-            
+            if (generation%5 == 0) {
+                //print x y values
+                //print sensor values
+                
+                ofstream myfile_x_y;
+                ofstream myfile_sensor;
+                int index_nn = 0;
+                int index_iteration = 0;
+                for (int te = 0; te < teamRover.at(0).temp_rewards_nn.size(); te++) {
+                    for (int te_1 =0; te_1<teamRover.at(0).temp_rewards_nn.at(te).size(); te_1++) {// neural network
+                        if (temp_highest_fitness == teamRover.at(0).temp_rewards_nn.at(te).at(te_1)) {//iteration
+                            index_nn = te;
+                            index_iteration = te_1;
+                        }
+                    }
+                }
+                
+                cout<<"This is network::"<<index_nn<<endl;
+                
+                //actual print
+                myfile_x_y.open("x_y_position_"+to_string(generation)+"_"+to_string(index_nn));
+                assert(teamRover.at(0).x_position_rover_nn_vec.size() == teamRover.at(0).y_position_rover_nn_vec.size());
+                assert(teamRover.at(0).x_position_rover_nn_vec.at(index_nn).size() == 100);
+                
+                for (int temp_print_local=0; temp_print_local<teamRover.at(0).x_position_rover_nn_vec.at(index_nn).size();temp_print_local++) {
+                    myfile_x_y<<teamRover.at(0).x_position_rover_nn_vec.at(index_nn).at(temp_print_local)<<"\t"<<teamRover.at(0).y_position_rover_nn_vec.at(index_nn).at(temp_print_local)<<endl;
+                }
+                for (int temp_print = 0 ,temp_print_local=0; temp_print_local<teamRover.at(0).x_position_rover_nn_vec.size(); temp_print++,temp_print_local++) {
+                    
+                }
+                
+                myfile_x_y<<endl;
+                myfile_x_y.close();
+            }
             
             /*for (int i=0 ; i<individualRover.temp_rewards_nn.size(); i++) { //i is neural network
                 bool found_neural_network = false;
@@ -1015,6 +1062,15 @@ myfile_x_y<<individualRover.x_position_rover_nn_vec.at(i).at(k)<<"\t"<<individua
                 N.mutate();
                 mypop.popVector.push_back(N);
             }
+            
+            teamRover.at(0).temp_sensor_nn.clear();
+            teamRover.at(0).temp_rewards_nn.clear();
+            teamRover.at(0).x_position_rover_nn_vec.clear();
+            teamRover.at(0).y_position_rover_nn_vec.clear();
+            teamRover.at(0).sensor_rover_nn_vec.clear();
+            teamRover.at(0).indi_reward.clear();
+            teamRover.at(0).max_reward.clear();
+            
             
         }
     }
