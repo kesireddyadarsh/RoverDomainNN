@@ -855,10 +855,10 @@ int main(int argc, const char * argv[]) {
         Environment world;
         //Set values of poi's
         POI individualPOI;
-        individualPOI.x_position_poi_vec.push_back(30.0);
-        individualPOI.x_position_poi_vec.push_back(35.0);
-        individualPOI.y_position_poi_vec.push_back(50.0);
-        individualPOI.y_position_poi_vec.push_back(55.0);
+        individualPOI.x_position_poi_vec.push_back(100.0);
+        individualPOI.y_position_poi_vec.push_back(100.0);
+        individualPOI.x_position_poi_vec.push_back(-100.0);
+        individualPOI.y_position_poi_vec.push_back(-100.0);
         individualPOI.value_poi_vec.push_back(100.0);
         individualPOI.value_poi_vec.push_back(100.0);
         
@@ -875,11 +875,6 @@ int main(int argc, const char * argv[]) {
         vector<Rover> teamRover;
         Rover a;
         teamRover.push_back(a);
-        
-//        //Rover object
-//        Rover individualRover;
-        teamRover.at(0).x_position = 0.0;
-        teamRover.at(0).y_position = 0.0;
         
         for (int k=0; k<number_of_rovers; k++) {
             for (int j=0; j<number_of_poi; j++) {
@@ -901,10 +896,11 @@ int main(int argc, const char * argv[]) {
         //fopen
         ofstream myfile_generation_fitness;
         myfile_generation_fitness.open("fitness_generation");
-        for(int generation =0; generation<100;generation++){
+        for(int generation =0; generation<500;generation++){
+            cout<<"Generation::"<<generation<<endl;
             for (int indiviualNN=0; indiviualNN<numNN; indiviualNN++) {
-                teamRover.at(0).x_position=0.0; //x_position of rover
-                teamRover.at(0).y_position=0.0; //y_position of rover
+                teamRover.at(0).x_position=50.0; //x_position of rover
+                teamRover.at(0).y_position=50.0; //y_position of rover
                 teamRover.at(0).theta = 0.0 ; //radians
                 for (int indiviualNN_iteration=0; indiviualNN_iteration<100; indiviualNN_iteration++) {
                     teamRover.at(0).reset_sensors();
@@ -933,11 +929,23 @@ int main(int argc, const char * argv[]) {
                         double cal_value =((1>distance)?1:distance);
                         distance_rover_poi.push_back(cal_value);
                     }
-                    double temp_deno_value = *min_element(distance_rover_poi.begin(), distance_rover_poi.end());
-                    teamRover.at(0).reward = (total_value_poi/temp_deno_value);
+                    
+                    assert(distance_rover_poi.size() == individualPOI.value_poi_vec.size());
+                    //distance_rover_poi contains distance to each poi if its less than 1 then 1 will be considered
+                    //double local_reward ;
+                    vector<double> local_reward_vec;
+                    for (int temp_distance_cal = 0 ; temp_distance_cal<distance_rover_poi.size(); temp_distance_cal++) {
+                        double local_reward = (individualPOI.value_poi_vec.at(temp_distance_cal)/distance_rover_poi.at(temp_distance_cal));
+                        local_reward_vec.push_back(local_reward);
+                    }
+                    double temp_local_reward = 0;
+                    for (int i =0; i<local_reward_vec.size(); i++) {
+                        temp_local_reward += local_reward_vec.at(i);
+                    }
+                    teamRover.at(0).reward = (temp_local_reward);
+                    local_reward_vec.clear();
                     
                     //Check Closest Distance
-                    
                     assert(teamRover.at(0).closest_dist_to_poi.size() == distance_rover_poi.size());
                     for (int c = 0; c<distance_rover_poi.size(); c++) {
                         if (teamRover.at(0).closest_dist_to_poi.at(c) >= distance_rover_poi.at(c)) {
@@ -945,7 +953,7 @@ int main(int argc, const char * argv[]) {
                         }
                     }
                     
-                    assert(teamRover.at(0).reward <= 200);
+                    assert(teamRover.at(0).reward <= total_value_poi);
                     
                     teamRover.at(0).indi_reward.push_back(teamRover.at(0).reward);
                     distance_rover_poi.clear();
@@ -954,7 +962,7 @@ int main(int argc, const char * argv[]) {
                 double temp_reward = *max_element(teamRover.at(0).indi_reward.begin(), teamRover.at(0).indi_reward.end());
                 teamRover.at(0).max_reward.push_back(temp_reward);
                 
-                assert(temp_reward <= 200);
+                assert(temp_reward <= total_value_poi);
                 
                 
                 teamRover.at(0).x_position_rover_nn_vec.push_back(teamRover.at(0).x_position_rover_iteration_vec);
@@ -993,14 +1001,18 @@ int main(int argc, const char * argv[]) {
                 
                 //actual print
                 myfile_x_y.open("x_y_position_"+to_string(generation)+"_"+to_string(index_nn));
+                myfile_sensor.open("sensor_"+to_string(generation)+"_"+to_string(index_nn));
                 assert(teamRover.at(0).x_position_rover_nn_vec.size() == teamRover.at(0).y_position_rover_nn_vec.size());
-                assert(teamRover.at(0).x_position_rover_nn_vec.at(index_nn).size() == 100);
+                //assert(teamRover.at(0).x_position_rover_nn_vec.at(index_nn).size() == 100);
                 
                 for (int temp_print_local=0; temp_print_local<teamRover.at(0).x_position_rover_nn_vec.at(index_nn).size();temp_print_local++) {
                     myfile_x_y<<teamRover.at(0).x_position_rover_nn_vec.at(index_nn).at(temp_print_local)<<"\t"<<teamRover.at(0).y_position_rover_nn_vec.at(index_nn).at(temp_print_local)<<endl;
                 }
-                for (int temp_print = 0 ,temp_print_local=0; temp_print_local<teamRover.at(0).x_position_rover_nn_vec.size(); temp_print++,temp_print_local++) {
-                    
+                for (int temp_print_local=0; temp_print_local<teamRover.at(0).x_position_rover_nn_vec.at(index_nn).size();temp_print_local++) {
+                    for (int temp_print =0; temp_print<teamRover.at(0).sensor_rover_nn_vec.at(index_nn).at(temp_print_local).size(); temp_print++) {
+                        myfile_sensor<<teamRover.at(0).sensor_rover_nn_vec.at(index_nn).at(temp_print_local).at(temp_print)<<"\t";
+                    }
+                    myfile_sensor<<endl;
                 }
                 
                 myfile_x_y<<endl;
