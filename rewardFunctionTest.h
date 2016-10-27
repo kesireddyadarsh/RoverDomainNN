@@ -19,6 +19,7 @@ public:
 };
 
 void rewardFunctionTest::single_rover_multi_poi_reward_test(){
+    bool VERBOSE = false;
     //POI object
     POI P_obj_reward_function;
     Rover R_obj_reward_function;
@@ -56,9 +57,10 @@ void rewardFunctionTest::single_rover_multi_poi_reward_test(){
         double temp_value = P_obj_reward_function.value_poi_vec.at(j)/distance_to_poi.at(j);
         rewards.push_back(temp_value);
     }
-    
-    for (int k=0; k<rewards.size(); k++) {
-        cout<<rewards.at(k)<<endl;
+    if(VERBOSE){
+        for (int k=0; k<rewards.size(); k++) {
+            cout<<rewards.at(k)<<endl;
+        }
     }
     
     

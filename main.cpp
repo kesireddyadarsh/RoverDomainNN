@@ -85,6 +85,31 @@ double find_scaling_number(){
 }
 
 
+void remove_lower_fitness_network(Population * p_Pop,vector<Rover>* p_rover){
+    
+    //evolution
+    double temp_selection_number= p_Pop->popVector.size()/2;
+    for (int selectNN=0; selectNN<(temp_selection_number); ++selectNN) {
+        double temp_random_1 = rand()%p_Pop->popVector.size();
+        double temp_random_2 = rand()%p_Pop->popVector.size();
+        while(temp_random_1==temp_random_2) {
+            temp_random_2 = rand()%p_Pop->popVector.size();
+        }
+        if (p_rover->at(0).max_reward.at(temp_random_1)>p_rover->at(0).max_reward.at(temp_random_2)) {
+            //delete neural network temp_random_2
+            p_Pop->popVector.erase(p_Pop->popVector.begin()+temp_random_2);
+            p_rover->at(0).max_reward.erase(p_rover->at(0).max_reward.begin()+temp_random_2);
+        }else{
+            //delete neural network temp_random_1
+            p_Pop->popVector.erase(p_Pop->popVector.begin()+temp_random_1);
+            p_rover->at(0).max_reward.erase(p_rover->at(0).max_reward.begin()+temp_random_1);
+        }
+    }
+    p_rover->at(0).max_reward.clear();
+
+    
+}
+
 //This is main function
 int main(int argc, const char * argv[]) {\
     cout<<"This is function ::"<<__FUNCTION__<<endl;
@@ -95,9 +120,6 @@ int main(int argc, const char * argv[]) {\
     if (test_rover == true) {
         testRoverSensors test_rover_sensor;
         test_rover_sensor.test_all_sensors();
-        if (VERBOSE) {
-            cout<<"\n\n\n$$$This is end of test all sensors function$$$\n\n"<<endl;
-        }
     }
     
     if (test_reward == true) {
@@ -118,6 +140,8 @@ int main(int argc, const char * argv[]) {\
         topology.push_back(10);
         topology.push_back(2);
         Population mypop(numNN,topology);
+        Population* mypop_evolution = &mypop;
+        
         
         //Create values for Rover;
         int x_position_otherRover=NULL;
@@ -149,6 +173,7 @@ int main(int argc, const char * argv[]) {\
         vector<Rover> teamRover;
         Rover a;
         teamRover.push_back(a);
+        vector<Rover>* p_rover = &teamRover;
         
         for (int k=0; k<number_of_rovers; k++) {
             for (int j=0; j<number_of_poi; j++) {
@@ -293,24 +318,25 @@ int main(int argc, const char * argv[]) {\
             }
             
             //evolution
-            double temp_selection_number= mypop.popVector.size()/2;
-            for (int selectNN=0; selectNN<(temp_selection_number); ++selectNN) {
-                double temp_random_1 = rand()%mypop.popVector.size();
-                double temp_random_2 = rand()%mypop.popVector.size();
-                while(temp_random_1==temp_random_2) {
-                    temp_random_2 = rand()%mypop.popVector.size();
-                }
-                if (teamRover.at(0).max_reward.at(temp_random_1)>teamRover.at(0).max_reward.at(temp_random_2)) {
-                    //delete neural network temp_random_2
-                    mypop.popVector.erase(mypop.popVector.begin()+temp_random_2);
-                    teamRover.at(0).max_reward.erase(teamRover.at(0).max_reward.begin()+temp_random_2);
-                }else{
-                    //delete neural network temp_random_1
-                    mypop.popVector.erase(mypop.popVector.begin()+temp_random_1);
-                    teamRover.at(0).max_reward.erase(teamRover.at(0).max_reward.begin()+temp_random_1);
-                }
-            }
-            teamRover.at(0).max_reward.clear();
+            remove_lower_fitness_network(mypop_evolution,p_rover);
+//            double temp_selection_number= mypop.popVector.size()/2;
+//            for (int selectNN=0; selectNN<(temp_selection_number); ++selectNN) {
+//                double temp_random_1 = rand()%mypop.popVector.size();
+//                double temp_random_2 = rand()%mypop.popVector.size();
+//                while(temp_random_1==temp_random_2) {
+//                    temp_random_2 = rand()%mypop.popVector.size();
+//                }
+//                if (teamRover.at(0).max_reward.at(temp_random_1)>teamRover.at(0).max_reward.at(temp_random_2)) {
+//                    //delete neural network temp_random_2
+//                    mypop.popVector.erase(mypop.popVector.begin()+temp_random_2);
+//                    teamRover.at(0).max_reward.erase(teamRover.at(0).max_reward.begin()+temp_random_2);
+//                }else{
+//                    //delete neural network temp_random_1
+//                    mypop.popVector.erase(mypop.popVector.begin()+temp_random_1);
+//                    teamRover.at(0).max_reward.erase(teamRover.at(0).max_reward.begin()+temp_random_1);
+//                }
+//            }
+//            teamRover.at(0).max_reward.clear();
             
             //repop
             vector<unsigned> a;
