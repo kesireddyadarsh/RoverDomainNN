@@ -32,6 +32,7 @@ class Rover{
     //Environment environment_object;
 public:
     double x_position,y_position;
+    vector<double> x_position_vec,y_position_vec;
     vector<double> sensors;
     vector<Net> singleneuralNetwork;
     void sense_poi(double x, double y, double val);
@@ -52,20 +53,26 @@ public:
     void sense_all_values(vector<double> x_position_poi_vec_rover,vector<double> y_position_poi_vec_rover,vector<double> value_poi_vec_rover);
     
     //stored values
-    vector<double> x_position_rover_iteration_vec;
-    vector<double> y_position_rover_iteration_vec;
-    vector<vector<double>> x_position_rover_nn_vec;
-    vector<vector<double>> y_position_rover_nn_vec;
-    vector<vector<double>> sensor_rover_iteration_vec;
-    vector<vector<vector<double>>> sensor_rover_nn_vec;
+//    vector<double> x_position_rover_iteration_vec;
+//    vector<double> y_position_rover_iteration_vec;
+//    vector<vector<double>> x_position_rover_nn_vec;
+//    vector<vector<double>> y_position_rover_nn_vec;
+//    vector<vector<double>> sensor_rover_iteration_vec;
+//    vector<vector<vector<double>>> sensor_rover_nn_vec;
     vector<double> max_reward;
-    vector<double> indi_reward;
+//    vector<double> indi_reward;
     
-    vector<vector<vector<double>>> temp_sensor_nn;
-    vector<vector<double>> temp_rewards_nn;
-    vector<double> temp_rewards;
+//    vector<vector<vector<double>>> temp_sensor_nn;
+//    vector<vector<double>> temp_rewards_nn;
+//    vector<double> temp_rewards;
+    
+//    vector<double> reward_per_time_step_vec;
+//    vector<double> x_per_time_step_vec;
+//    vector<double> y_per_time_step_vec;
+//    vector<vector<double>> sensor_per_time_step_vec;
     
     vector<double> closest_dist_to_poi;
+    vector<double> local_time_step_reward;
 
     
 };
@@ -175,6 +182,7 @@ void Rover::move_rover(double dx, double dy){
 }
 
 
+//Takes all poi values and update sensor values
 void Rover::sense_all_values(vector<double> x_position_poi_vec_rover,vector<double> y_position_poi_vec_rover,vector<double> value_poi_vec_rover){
     bool VERBOSE = false;
     reset_sensors();
