@@ -640,7 +640,7 @@ void survival_of_fittest(vector<Rover>* teamRover,int number_of_neural_network){
                 teamRover->at(rover_number).network_for_agent.erase(teamRover->at(rover_number).network_for_agent.begin()+random_number_2);
             }
         }
-        assert(teamRover->at(rover_number).network_for_agent.size() == (number_of_neural_network/2) );
+        assert(teamRover->at(rover_number).network_for_agent.size() == ((number_of_neural_network)/2) );
     }
 }
 
@@ -856,7 +856,8 @@ void select_hall_of_fame(vector<Rover>* teamRover,POI* individualPOI){
     }
 }
 
-void hall_of_fame_simulation(){
+void create_hall_of_fame(vector<Rover>* teamRover, POI* individualPOI){
+    //create new neural networks with hall of fame agents
     
 }
 
@@ -979,7 +980,7 @@ int main(int argc, const char * argv[]) {
         
         select_hall_of_fame(p_rover,p_poi);
         
-        hall_of_fame_simulation();
+        create_hall_of_fame(p_rover,p_poi);
         
         if (VERBOSE) {
             FILE* p_output_development;
@@ -987,7 +988,7 @@ int main(int argc, const char * argv[]) {
             for (int rover_number = 0; rover_number<number_of_rovers; rover_number++) {
                 fprintf(p_output_development, "%d \n",rover_number);
                 for (int neural_network = 0; neural_network < numNN; neural_network++) {
-                    fprintf(p_output_development, "%d \t %f \t %f \t %f \t %d \n",neural_network, teamRover.at(rover_number).network_for_agent.at(neural_network).local_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).global_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).difference_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).hall_of_fame );
+                    fprintf(p_output_development, "%d \t %d \t %f \t %f \t %f \t %d \n",neural_network,teamRover.at(rover_number).network_for_agent.at(neural_network).my_team_number, teamRover.at(rover_number).network_for_agent.at(neural_network).local_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).global_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).difference_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).hall_of_fame );
                 }
             }
             fclose(p_output_development);
