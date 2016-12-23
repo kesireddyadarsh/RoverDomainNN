@@ -627,8 +627,11 @@ void survival_of_fittest(vector<Rover>* teamRover,int number_of_neural_network){
             // Generate two random values
             int random_number_1 = rand()%teamRover->at(rover_number).network_for_agent.size();
             int random_number_2 = rand()%teamRover->at(rover_number).network_for_agent.size();
-            while (random_number_1 == random_number_2) {
+            //This will save hall of fame policies
+            while ((teamRover->at(rover_number).network_for_agent.at(random_number_1).hall_of_fame == true || teamRover->at(rover_number).network_for_agent.at(random_number_2).hall_of_fame == true) || (random_number_1 == random_number_2)) {
                 random_number_1 = rand()%teamRover->at(rover_number).network_for_agent.size();
+                random_number_2 = rand()%teamRover->at(rover_number).network_for_agent.size();
+                
             }
             
             //check which difference is less
@@ -841,6 +844,13 @@ void simulation( int team_number, vector<Rover>* teamRover, POI* individualPOI,d
 }
 
 void select_hall_of_fame(vector<Rover>* teamRover,POI* individualPOI){
+    //Makes all hall of fame to false
+    for (int rover_number =0 ; rover_number<teamRover->size(); rover_number++) {
+        for (int neural_network = 0 ; neural_network < teamRover->at(rover_number).network_for_agent.size(); neural_network++) {
+            teamRover->at(rover_number).network_for_agent.at(neural_network).hall_of_fame = false ;
+        }
+    }
+    
     for (int rover_number = 0; rover_number <teamRover->size(); rover_number++) {
         double temp_best_global = 0.0;
         int index = 0;
@@ -856,10 +866,7 @@ void select_hall_of_fame(vector<Rover>* teamRover,POI* individualPOI){
     }
 }
 
-void create_hall_of_fame(vector<Rover>* teamRover, POI* individualPOI){
-    //create new neural networks with hall of fame agents
-    
-}
+
 
 /***************************
     Main
@@ -948,7 +955,10 @@ int main(int argc, const char * argv[]) {
                 teamRover.at(rover_number).network_for_agent.at(neural_network).my_rover_number = rover_number;
             }
         }
-        
+        for(int generation =0 ; generation < 10 ;generation++){
+            for (int rover_number =0; rover_number<teamRover.size(); rover_number++) {
+                teamRover.at(rover_number).random_numbers.clear();
+            }
         //Find scaling number
         double scaling_number = find_scaling_number();
         
@@ -980,7 +990,6 @@ int main(int argc, const char * argv[]) {
         
         select_hall_of_fame(p_rover,p_poi);
         
-        create_hall_of_fame(p_rover,p_poi);
         
         if (VERBOSE) {
             FILE* p_output_development;
@@ -994,8 +1003,9 @@ int main(int argc, const char * argv[]) {
             fclose(p_output_development);
         }
         
-        
-    
+        survival_of_fittest(p_rover, numNN);
+        repopulate(p_rover, numNN);
+    }
         cout<<"Check"<<endl;
         
     }
