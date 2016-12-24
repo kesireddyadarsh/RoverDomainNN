@@ -20,7 +20,7 @@ bool test_simulation = true;
 #define PI 3.14159265
 
 /*************************
-    Neural Network
+ Neural Network
  ************************/
 
 struct connect{
@@ -187,7 +187,7 @@ double Net::backProp(){
 }
 
 /***********************
-    POI
+ POI
  **********************/
 class POI{
 public:
@@ -200,7 +200,7 @@ public:
 };
 
 /************************
-    Environment
+ Environment
  ***********************/
 
 class Environment{
@@ -209,7 +209,7 @@ public:
 };
 
 /************************
-    Rover
+ Rover
  ***********************/
 
 double resolve(double angle);
@@ -400,7 +400,7 @@ void Rover::sense_all_values(vector<double> x_position_poi_vec_rover,vector<doub
 }
 
 /*************************
-    Population
+ Population
  ************************/
 //This is for population of neural network
 class Population{
@@ -460,8 +460,8 @@ void Population::runNetwork(vector<double> inputVals,int num_neural){
 }
 
 /**************************
-Simulation Functions
-**************************/
+ Simulation Functions
+ **************************/
 // Will resolve angle between 0 to 360
 double resolve(double angle){
     while(angle >= 360){
@@ -713,15 +713,15 @@ void simulation( int team_number, vector<Rover>* teamRover, POI* individualPOI,d
     
     
     /*****************************************************************************
-    policy_numbers has policy number to use
-    rover_number will be rover number
-    First for loop runs time_step second for loop runs size of policy_numbers
-    So for each time step each policy from team will execute
-    ******************************************************************************/
+     policy_numbers has policy number to use
+     rover_number will be rover number
+     First for loop runs time_step second for loop runs size of policy_numbers
+     So for each time step each policy from team will execute
+     ******************************************************************************/
     for (int time_step = 0 ; time_step < 20; time_step++) {
         for (int rover_number = 0; rover_number < policy_numbers.size(); rover_number++) {
             if(VERBOSE)
-            cout<<"This is rover_number::"<<rover_number<<endl;
+                cout<<"This is rover_number::"<<rover_number<<endl;
             if(VERBOSE)
                 cout<<"This is time_step ::"<<time_step<<endl;
             //reset_sense_new(rover_number, p_rover, p_poi); // reset and sense new values
@@ -762,8 +762,8 @@ void simulation( int team_number, vector<Rover>* teamRover, POI* individualPOI,d
     for(int rover_number = 0; rover_number < policy_numbers.size(); rover_number++){
         int temp_policy_number = policy_numbers.at(rover_number);
         for (int check_closest_poi = 0; check_closest_poi < teamRover->at(rover_number).network_for_agent.at(temp_policy_number).closest_dist_to_poi.size(); check_closest_poi++) {
-                double temp_var = 99999999.9999;
-                assert( teamRover->at(rover_number).network_for_agent.at(temp_policy_number).closest_dist_to_poi.at(check_closest_poi) < temp_var );
+            double temp_var = 99999999.9999;
+            assert( teamRover->at(rover_number).network_for_agent.at(temp_policy_number).closest_dist_to_poi.at(check_closest_poi) < temp_var );
         }
     }
     
@@ -781,7 +781,7 @@ void simulation( int team_number, vector<Rover>* teamRover, POI* individualPOI,d
     }
     
     /******************************************************************************
-    Calculate global reward
+     Calculate global reward
      1. calculate closest distance to each poi for all policies in same team
      2. calculate global value
      3. assign global reward to each policy in same team
@@ -869,7 +869,7 @@ void select_hall_of_fame(vector<Rover>* teamRover,POI* individualPOI){
 
 
 /***************************
-    Main
+ Main
  **************************/
 
 int main(int argc, const char * argv[]) {
@@ -958,54 +958,57 @@ int main(int argc, const char * argv[]) {
         for(int generation =0 ; generation < 10 ;generation++){
             for (int rover_number =0; rover_number<teamRover.size(); rover_number++) {
                 teamRover.at(rover_number).random_numbers.clear();
-            }
-        //Find scaling number
-        double scaling_number = find_scaling_number();
-        
-        //Setting distance to largest
-        for (int network_number =0 ; network_number <numNN; network_number++) {
-            for (int rover_number =0; rover_number < number_of_rovers; rover_number++) {
-                for (int poi_number =0; poi_number<number_of_poi; poi_number++) {
-                    teamRover.at(rover_number).network_for_agent.at(network_number).closest_dist_to_poi.push_back(99999999.9999);
+                for (int neural_network = 0; neural_network < teamRover.at(rover_number).network_for_agent.size(); neural_network++) {
+                    teamRover.at(rover_number).network_for_agent.at(neural_network).closest_dist_to_poi.clear();
                 }
             }
-        }
-        
-        //Select random Neural Networks for each agent
-        generate_random_numbers(p_rover,numNN);
-        int temp_check_policies = 0;
-        while (temp_check_policies != 1234567) {
-            temp_check_policies = check_policies(p_rover, numNN);
-            if (temp_check_policies != 1234567) {
-                generate_random_numbers_policies(p_rover,numNN,temp_check_policies);
-            }
-        }
-        
-        //team numbers will be assigned to each agent. Teams are developed on generate_random_numbers function
-        assign_team_number(p_rover,numNN);
-        
-        for (int team_number = 0; team_number<numNN; team_number++) {
-            simulation(team_number, p_rover, p_poi, scaling_number);
-        }
-        
-        select_hall_of_fame(p_rover,p_poi);
-        
-        
-        if (VERBOSE) {
-            FILE* p_output_development;
-            p_output_development = fopen("development.txt", "a");
-            for (int rover_number = 0; rover_number<number_of_rovers; rover_number++) {
-                fprintf(p_output_development, "%d \n",rover_number);
-                for (int neural_network = 0; neural_network < numNN; neural_network++) {
-                    fprintf(p_output_development, "%d \t %d \t %f \t %f \t %f \t %d \n",neural_network,teamRover.at(rover_number).network_for_agent.at(neural_network).my_team_number, teamRover.at(rover_number).network_for_agent.at(neural_network).local_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).global_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).difference_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).hall_of_fame );
+            //Find scaling number
+            double scaling_number = find_scaling_number();
+            
+            //Setting distance to largest
+            for (int network_number =0 ; network_number <numNN; network_number++) {
+                for (int rover_number =0; rover_number < number_of_rovers; rover_number++) {
+                    for (int poi_number =0; poi_number<number_of_poi; poi_number++) {
+                        teamRover.at(rover_number).network_for_agent.at(network_number).closest_dist_to_poi.push_back(99999999.9999);
+                    }
                 }
             }
-            fclose(p_output_development);
+            
+            //Select random Neural Networks for each agent
+            generate_random_numbers(p_rover,numNN);
+            int temp_check_policies = 0;
+            while (temp_check_policies != 1234567) {
+                temp_check_policies = check_policies(p_rover, numNN);
+                if (temp_check_policies != 1234567) {
+                    generate_random_numbers_policies(p_rover,numNN,temp_check_policies);
+                }
+            }
+            
+            //team numbers will be assigned to each agent. Teams are developed on generate_random_numbers function
+            assign_team_number(p_rover,numNN);
+            
+            for (int team_number = 0; team_number<numNN; team_number++) {
+                simulation(team_number, p_rover, p_poi, scaling_number);
+            }
+            
+            select_hall_of_fame(p_rover,p_poi);
+            
+            
+            if (VERBOSE) {
+                FILE* p_output_development;
+                p_output_development = fopen("development.txt", "a");
+                for (int rover_number = 0; rover_number<number_of_rovers; rover_number++) {
+                    fprintf(p_output_development, "%d \n",rover_number);
+                    for (int neural_network = 0; neural_network < numNN; neural_network++) {
+                        fprintf(p_output_development, "%d \t %d \t %f \t %f \t %f \t %d \n",neural_network,teamRover.at(rover_number).network_for_agent.at(neural_network).my_team_number, teamRover.at(rover_number).network_for_agent.at(neural_network).local_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).global_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).difference_reward_wrt_team,teamRover.at(rover_number).network_for_agent.at(neural_network).hall_of_fame );
+                    }
+                }
+                fclose(p_output_development);
+            }
+            
+            survival_of_fittest(p_rover, numNN);
+            repopulate(p_rover, numNN);
         }
-        
-        survival_of_fittest(p_rover, numNN);
-        repopulate(p_rover, numNN);
-    }
         cout<<"Check"<<endl;
         
     }
