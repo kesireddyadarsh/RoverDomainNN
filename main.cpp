@@ -308,6 +308,9 @@ double Rover::find_phi(double x_sensed, double y_sensed){
     double distance_in_y_phi =  y_sensed - y_position;
     double deg2rad = 180/PI;
     double phi = (atan2(distance_in_x_phi,distance_in_y_phi) *(deg2rad));
+    if (isnan(phi)) {
+        phi = 90;
+    }
     return phi;
 }
 
@@ -315,6 +318,9 @@ double Rover::find_theta(double x_sensed, double y_sensed){
     double distance_in_x_theta =  x_sensed - x_position;
     double distance_in_y_theta =  y_sensed - y_position;
     theta += atan2(distance_in_x_theta,distance_in_y_theta) * (180 / PI);
+    while (isnan(theta)) {
+        theta = 90;
+    }
     return phi;
 }
 
@@ -324,6 +330,7 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     double phi = find_phi(x_sensed, y_sensed);
     double quadrant_angle = phi - theta;
     quadrant_angle = resolve(quadrant_angle);
+    assert(quadrant_angle != NAN);
     //    cout << "IN QUAD: FIND PHI: " << phi << endl;
     
     phi = resolve(phi);
@@ -331,16 +338,16 @@ int Rover::find_quad(double x_sensed, double y_sensed){
     //    cout << "IN QUAD: FIND PHI2: " << phi << endl;
     
     int case_number;
-    if ((0<=quadrant_angle && 45>= quadrant_angle)||(315<quadrant_angle && 360>= quadrant_angle)) {
+    if ((0 <= quadrant_angle && 45 >= quadrant_angle)||(315 < quadrant_angle && 360 >= quadrant_angle)) {
         //do something in Q1
         case_number = 0;
-    }else if ((45<quadrant_angle && 135>= quadrant_angle)) {
+    }else if ((45 < quadrant_angle && 135 >= quadrant_angle)) {
         // do something in Q2
         case_number = 1;
-    }else if((135<quadrant_angle && 225>= quadrant_angle)){
+    }else if((135 < quadrant_angle && 225 >= quadrant_angle)){
         //do something in Q3
         case_number = 2;
-    }else if((225<quadrant_angle && 315>= quadrant_angle)){
+    }else if((225 < quadrant_angle && 315 >= quadrant_angle)){
         //do something in Q4
         case_number = 3;
     }
