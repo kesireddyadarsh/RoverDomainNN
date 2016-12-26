@@ -307,6 +307,12 @@ double Rover::find_phi(double x_sensed, double y_sensed){
     double distance_in_x_phi =  x_sensed - x_position;
     double distance_in_y_phi =  y_sensed - y_position;
     double deg2rad = 180/PI;
+//    cout<<"This is x sensed:::"<<x_sensed<<endl;
+//    cout<<"This is y sensed:::"<<y_sensed<<endl;
+//    cout<<"This is x position:::"<<x_position<<endl;
+//    cout<<"This is y position:::"<<y_position<<endl;
+//    cout<<"This is distance in x phi:::"<<distance_in_x_phi<<endl;
+//    cout<<"This is distance in y phi:::"<<distance_in_y_phi<<endl;
     double phi = (atan2(distance_in_x_phi,distance_in_y_phi) *(deg2rad));
     if (isnan(phi)) {
         phi = 90;
@@ -317,6 +323,8 @@ double Rover::find_phi(double x_sensed, double y_sensed){
 double Rover::find_theta(double x_sensed, double y_sensed){
     double distance_in_x_theta =  x_sensed - x_position;
     double distance_in_y_theta =  y_sensed - y_position;
+    //cout<<"This is distance in x theta:::"<<distance_in_x_theta<<endl;
+    //cout<<"This is distance in y theta:::"<<distance_in_y_theta<<endl;
     theta += atan2(distance_in_x_theta,distance_in_y_theta) * (180 / PI);
     while (isnan(theta)) {
         theta = 90;
@@ -487,6 +495,8 @@ double resolve(double angle){
 double find_scaling_number(){
     double number =0.0;
     double temp_number =0.0;
+    vector<double> xposition;
+    vector<double> yposition;
     Rover R_obj; //Rover object
     POI P_obj; // POI object
     
@@ -495,16 +505,24 @@ double find_scaling_number(){
     P_obj.value_poi =100;
     
     int temp_rand = rand()%100;
+    while (temp_rand == 0) {
+        temp_rand = rand()%100;
+    }
     vector<vector<double>> group_sensors;
     
     for (int temp=0; temp<temp_rand; temp++) {
         R_obj.x_position=rand()%100;
         R_obj.y_position=rand()%100;
+        xposition.push_back(R_obj.x_position);
+        yposition.push_back(R_obj.y_position);
+        
         
         R_obj.reset_sensors();
         R_obj.sense_poi(P_obj.x_position_poi, P_obj.y_position_poi, P_obj.value_poi);
         group_sensors.push_back(R_obj.sensors);
     }
+    
+    assert(!group_sensors.empty());
     
     for (int i=0; i<group_sensors.size(); i++) {
         temp_number=*max_element(group_sensors.at(i).begin(), group_sensors.at(i).end());
@@ -515,6 +533,9 @@ double find_scaling_number(){
     
     R_obj.reset_sensors();
     
+    assert(number != 0.0);
+    xposition.clear();
+    yposition.clear();
     return number;
 }
 
@@ -741,15 +762,25 @@ void simulation( int team_number, vector<Rover>* teamRover, POI* individualPOI,d
             }
             
             int temp_variable_nn = policy_numbers.at(rover_number);
+//            cout<<"This is temp_varible_nn :::"<<temp_variable_nn<<endl;
             
             if (VERBOSE)
                 cout<<"This is temp_variable_nn:::"<<temp_variable_nn<<endl;
             
             teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).feedForward(teamRover->at(rover_number).sensors); // scaled input into neural network
-            
+            if (teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).outputvaluesNN.empty()) {
+                for (int change_sensor_values = 0 ; change_sensor_values <teamRover->at(rover_number).sensors.size(); change_sensor_values++) {
+                    cout<<"\t"<<teamRover->at(rover_number).sensors.at(change_sensor_values)<<"\t";
+                }
+                cout<<endl;
+            }
             double dx = teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).outputvaluesNN.at(0);
             double dy = teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).outputvaluesNN.at(1);
             teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).outputvaluesNN.clear();
+            assert(!isnan(dx));
+            assert(!isnan(dy));
+//            cout<<"X value neural network:::"<<dx<<endl;
+//            cout<<"Y value neurla network:::"<<dy<<endl;
             
             teamRover->at(rover_number).move_rover(dx, dy);
             
@@ -944,7 +975,7 @@ int main(int argc, const char * argv[]) {
         
         //Second set up neural networks
         //Create numNN of neural network with pointer
-        int numNN=10;
+        int numNN = 10;
         vector<unsigned> topology;
         topology.clear();
         topology.push_back(8);
