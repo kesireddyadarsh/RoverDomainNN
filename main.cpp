@@ -307,28 +307,16 @@ double Rover::find_phi(double x_sensed, double y_sensed){
     double distance_in_x_phi =  x_sensed - x_position;
     double distance_in_y_phi =  y_sensed - y_position;
     double deg2rad = 180/PI;
-//    cout<<"This is x sensed:::"<<x_sensed<<endl;
-//    cout<<"This is y sensed:::"<<y_sensed<<endl;
-//    cout<<"This is x position:::"<<x_position<<endl;
-//    cout<<"This is y position:::"<<y_position<<endl;
-//    cout<<"This is distance in x phi:::"<<distance_in_x_phi<<endl;
-//    cout<<"This is distance in y phi:::"<<distance_in_y_phi<<endl;
     double phi = (atan2(distance_in_x_phi,distance_in_y_phi) *(deg2rad));
-    if (isnan(phi)) {
-        phi = 90;
-    }
+    
     return phi;
 }
 
 double Rover::find_theta(double x_sensed, double y_sensed){
     double distance_in_x_theta =  x_sensed - x_position;
     double distance_in_y_theta =  y_sensed - y_position;
-    //cout<<"This is distance in x theta:::"<<distance_in_x_theta<<endl;
-    //cout<<"This is distance in y theta:::"<<distance_in_y_theta<<endl;
     theta += atan2(distance_in_x_theta,distance_in_y_theta) * (180 / PI);
-    while (isnan(theta)) {
-        theta = 90;
-    }
+    
     return phi;
 }
 
@@ -746,7 +734,11 @@ void simulation( int team_number, vector<Rover>* teamRover, POI* individualPOI,d
      First for loop runs time_step second for loop runs size of policy_numbers
      So for each time step each policy from team will execute
      ******************************************************************************/
-    for (int time_step = 0 ; time_step < 20; time_step++) {
+//    FILE* p_pathRover_0;
+//    p_pathRover_0 = fopen("Rover_0.txt", "a");
+//    FILE* p_pathRover_1;
+//    p_pathRover_1 = fopen("Rover_1.txt", "a");
+    for (int time_step = 0 ; time_step < 200; time_step++) {
         for (int rover_number = 0; rover_number < policy_numbers.size(); rover_number++) {
             if(VERBOSE)
                 cout<<"This is rover_number::"<<rover_number<<endl;
@@ -762,27 +754,28 @@ void simulation( int team_number, vector<Rover>* teamRover, POI* individualPOI,d
             }
             
             int temp_variable_nn = policy_numbers.at(rover_number);
-//            cout<<"This is temp_varible_nn :::"<<temp_variable_nn<<endl;
             
             if (VERBOSE)
                 cout<<"This is temp_variable_nn:::"<<temp_variable_nn<<endl;
             
             teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).feedForward(teamRover->at(rover_number).sensors); // scaled input into neural network
-            if (teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).outputvaluesNN.empty()) {
-                for (int change_sensor_values = 0 ; change_sensor_values <teamRover->at(rover_number).sensors.size(); change_sensor_values++) {
-                    cout<<"\t"<<teamRover->at(rover_number).sensors.at(change_sensor_values)<<"\t";
-                }
-                cout<<endl;
+            for (int change_sensor_values = 0 ; change_sensor_values <teamRover->at(rover_number).sensors.size(); change_sensor_values++) {
+                    assert(!isnan(teamRover->at(rover_number).sensors.at(change_sensor_values)));
             }
+            
             double dx = teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).outputvaluesNN.at(0);
             double dy = teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).outputvaluesNN.at(1);
             teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).outputvaluesNN.clear();
+            
             assert(!isnan(dx));
             assert(!isnan(dy));
-//            cout<<"X value neural network:::"<<dx<<endl;
-//            cout<<"Y value neurla network:::"<<dy<<endl;
-            
             teamRover->at(rover_number).move_rover(dx, dy);
+//            if (rover_number == 0) {
+//                fprintf(p_pathRover_0, "%f \t %f \n",teamRover->at(rover_number).x_position,teamRover->at(rover_number).y_position);
+//            }
+//            if (rover_number == 1) {
+//                fprintf(p_pathRover_1, "%f \t %f \n",teamRover->at(rover_number).x_position,teamRover->at(rover_number).y_position);
+//            }
             
             // calculate rover distance for each POI
             for (int cal_dis =0; cal_dis<individualPOI->value_poi_vec.size(); cal_dis++) {
@@ -793,9 +786,11 @@ void simulation( int team_number, vector<Rover>* teamRover, POI* individualPOI,d
                     teamRover->at(rover_number).network_for_agent.at(temp_variable_nn).closest_dist_to_poi.at(cal_dis) = distance ;
                 }
             }
+            
         }
     }
-    
+//    fclose(p_pathRover_1);
+//    fclose(p_pathRover_0);
     //check if closest distance changing
     for(int rover_number = 0; rover_number < policy_numbers.size(); rover_number++){
         int temp_policy_number = policy_numbers.at(rover_number);
