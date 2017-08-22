@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <fstream>
+#include <string>
+#include <algorithm>
 #include "environment.h"
 #include "POI.h"
 #include "evolutionAlgorithm.h"
