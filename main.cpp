@@ -264,7 +264,7 @@ void custom_test(){
 }
 
 //x and y position of poi
-vector<vector<double>> poi_positions;
+vector< vector <double> > poi_positions;
 vector<double> poi_positions_loc;
 
 void stationary_rover_test(double x_start,double y_start){//Pass x_position,y_position
@@ -274,7 +274,7 @@ void stationary_rover_test(double x_start,double y_start){//Pass x_position,y_po
     R_obj.reset_sensors();
     
     //x and y position of poi
-    vector<vector<double>> poi_positions;
+    vector< vector <double> > poi_positions;
     vector<double> poi_positions_loc;
     
     R_obj.x_position =x_start;
@@ -533,7 +533,7 @@ void two_rovers_test(double x_start, double y_start){
 }
 
 vector<double> row_values;
-vector<vector<double>> assert_check_values;
+vector< vector <double> > assert_check_values;
 
 void fill_assert_check_values(){
     //First set of x , y thetha values
@@ -726,7 +726,7 @@ void test_path(double x_start, double y_start){
     
 }
 
-vector<vector<double>> point_x_y_circle;
+vector< vector <double> > point_x_y_circle;
 vector<double> temp;
 
 void find_x_y_test_circle_path(double start_x_position,double start_y_position,double angle){
